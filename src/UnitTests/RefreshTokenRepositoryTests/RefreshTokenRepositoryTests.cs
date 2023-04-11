@@ -1,4 +1,5 @@
-﻿using Infrastructure.RefreshTokenPersistance;
+﻿using Infrastructure;
+using Infrastructure.RefreshTokenPersistance;
 using StackExchange.Redis;
 
 namespace UnitTests.RefreshTokenRepositoryTests;
@@ -7,7 +8,7 @@ public class RefreshTokenRepositoryTests : IDisposable
 {
     public RefreshTokenRepository Repository { get; }
     public IDatabase Redis { get; }
-    public Guid UserId { get; } = new Guid("4605cd1f-cd30-4480-b788-cbbbe009fd9c");
+    public UserId UserId { get; } = new UserId("4605cd1f-cd30-4480-b788-cbbbe009fd9c");
     public Guid RefreshToken { get; } = new Guid("1d1b1a95-ccf7-47d2-8bce-7a04e5aedf1b");
     
     public RefreshTokenRepositoryTests()
@@ -47,7 +48,7 @@ public class RefreshTokenRepositoryTests : IDisposable
     {
         await Repository.Add(UserId, RefreshToken);
 
-        Guid userId = await Repository.PopAssociatedUser(RefreshToken);
+        UserId userId = await Repository.PopAssociatedUser(RefreshToken);
         
         Assert.Equal(userId, UserId);
     }

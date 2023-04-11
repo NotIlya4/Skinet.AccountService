@@ -13,7 +13,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         _options = options;
     }
 
-    public async Task Add(Guid userId, Guid token)
+    public async Task Add(UserId userId, Guid token)
     {
         string key = BuildRefreshTokenKey(token);
         string value = userId.ToString();
@@ -21,7 +21,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         await _redis.StringSetAsync(key, value, _options.JwtRefreshTokenExpireTime);
     }
 
-    public async Task<Guid> PopAssociatedUser(Guid refreshToken)
+    public async Task<UserId> PopAssociatedUser(Guid refreshToken)
     {
         string key = BuildRefreshTokenKey(refreshToken);
 
@@ -29,7 +29,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         
         AssertRedisValueNull(redisValue);
 
-        return new Guid(redisValue.ToString());
+        return new UserId(redisValue.ToString());
     }
 
     private void AssertRedisValueNull(RedisValue redisValue)
