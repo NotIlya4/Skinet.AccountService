@@ -1,11 +1,12 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Domain.Primitives;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.JwtToken;
 
-public class JwtTokenManager
+public class JwtTokenManager : IJwtTokenManager
 {
     private readonly JwtTokenManagerOptions _options;
     private readonly JwtSecurityTokenHandler _tokenHandler = new();

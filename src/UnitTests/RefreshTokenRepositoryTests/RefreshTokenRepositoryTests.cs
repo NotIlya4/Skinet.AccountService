@@ -1,5 +1,7 @@
-﻿using Infrastructure;
-using Infrastructure.RefreshTokenPersistance;
+﻿using Domain.Primitives;
+using Infrastructure;
+using Infrastructure.RefreshToken;
+using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
 
 namespace UnitTests.RefreshTokenRepositoryTests;
@@ -8,75 +10,96 @@ public class RefreshTokenRepositoryTests : IDisposable
 {
     public RefreshTokenRepository Repository { get; }
     public IDatabase Redis { get; }
-    public UserId UserId { get; } = new UserId("4605cd1f-cd30-4480-b788-cbbbe009fd9c");
-    public Guid RefreshToken { get; } = new Guid("1d1b1a95-ccf7-47d2-8bce-7a04e5aedf1b");
+    public UserId UserWithRandomTokens { get; } = new UserId("5a1e1ce5-7734-4fdb-a721-2cc70f316c81");
+    public TimestampRefreshToken ExpiredToken1 { get; }
+    public TimestampRefreshToken ExpiredToken2 { get; }
+    public TimestampRefreshToken ValidToken1 { get; }
+    public TimestampRefreshToken ValidToken2 { get; }
     
     public RefreshTokenRepositoryTests()
     {
         ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect("localhost");
         Redis = connectionMultiplexer.GetDatabase(15);
+        Redis.Execute("FLUSHDB");
+        
         Repository = new RefreshTokenRepository(Redis,
             new TokenRepositoryOptions() { JwtRefreshTokenExpireTime = TimeSpan.FromDays(1) });
-    }
 
-    [Fact]
-    public async Task Add_AddToken_TokenPersistsInSpecificFormat()
-    {
-        await Repository.Add(UserId, RefreshToken);
+        ExpiredToken1 = new TimestampRefreshToken()
+            { Issued = DateTime.UtcNow.AddDays(-3), RefreshToken = new Guid("7e2311f4-c9ee-40de-b5c4-b4f11977d80f") };
+        ExpiredToken2 = new TimestampRefreshToken()
+            { Issued = DateTime.UtcNow.AddDays(-2), RefreshToken = new Guid("db3b41d8-7c12-4512-bc41-740d0c77eeb7") };
 
-        string key = BuildKey(RefreshToken);
-        string value = Redis.StringGet(key).ToString();
+        ValidToken1 = new TimestampRefreshToken()
+            { Issued = DateTime.UtcNow.AddHours(-5), RefreshToken = new Guid("960a12f0-aef1-46d7-8b1f-44bf07bb0d86") };
+        ValidToken2 = new TimestampRefreshToken()
+            { Issued = DateTime.UtcNow.AddHours(-2), RefreshToken = new Guid("2624e694-a8ed-4f5d-8a34-e92feca21cc7") };
 
-        Assert.Equal(value, UserId.ToString());
-    }
-
-    [Fact]
-    public async Task Add_AddToken_TokenHasRightExpiry()
-    {
-        await Repository.Add(UserId, RefreshToken);
-
-        string key = BuildKey(RefreshToken);
-
-        TimeSpan redisTimeSpan = Redis.KeyTimeToLive(key)!.Value;
-        TimeSpan timeSpan = TimeSpan.FromDays(1) - redisTimeSpan;
-        
-        Assert.True(timeSpan.TotalSeconds < 10);
-    }
-
-    [Fact]
-    public async Task PopAssociatedUser_RefreshTokenExists_ReturnAssociatedUserId()
-    {
-        await Repository.Add(UserId, RefreshToken);
-
-        UserId userId = await Repository.PopAssociatedUser(RefreshToken);
-        
-        Assert.Equal(userId, UserId);
-    }
-    
-    [Fact]
-    public async Task PopAssociatedUser_RefreshTokenExists_DeleteRefreshToken()
-    {
-        await Repository.Add(UserId, RefreshToken);
-        await Repository.PopAssociatedUser(RefreshToken);
-
-        string key = BuildKey(RefreshToken);
-        RedisValue redisValue = Redis.StringGet(key);
-        
-        Assert.False(redisValue.HasValue);
-    }
-    
-    [Fact]
-    public async Task PopAssociatedUser_RefreshTokenDoesNotExist_ThrowInvalidRefreshTokenException()
-    {
-        await Assert.ThrowsAsync<InvalidRefreshTokenException>(async () =>
+        List<TimestampRefreshToken> randomTokens = new List<TimestampRefreshToken>()
         {
-            await Repository.PopAssociatedUser(RefreshToken);
+            ExpiredToken1,
+            ExpiredToken2,
+            ValidToken1,
+            ValidToken2
+        };
+        
+        Redis.StringSet(BuildKey(UserWithRandomTokens), SerializeRefreshTokens(randomTokens));
+    }
+
+    [Fact]
+    public async Task StrictDelete_SomeTokensExpireAndSomeNot_SuccessfullyDeleteUnExpiredToken()
+    {
+        await Repository.StrictDelete(UserWithRandomTokens, ValidToken2.RefreshToken);
+        await Repository.StrictDelete(UserWithRandomTokens, ValidToken1.RefreshToken);
+    }
+
+    [Fact]
+    public async Task StrictDelete_DeleteSameValidTokenTwice_ThrowExceptionOnSecondTime()
+    {
+        await Repository.StrictDelete(UserWithRandomTokens, ValidToken2.RefreshToken);
+
+        await AssertStrictDeleteThrows(UserWithRandomTokens, ValidToken2.RefreshToken);
+    }
+
+    [Fact]
+    public async Task StrictDelete_DeleteExpiredToken_ThrowNotFoundException()
+    {
+        await AssertStrictDeleteThrows(UserWithRandomTokens, ExpiredToken1.RefreshToken);
+        await AssertStrictDeleteThrows(UserWithRandomTokens, ExpiredToken2.RefreshToken);
+    }
+
+    [Fact]
+    public async Task DeleteAllForUser_StrictDeleteValidToken_ThrowNotFoundException()
+    {
+        await Repository.DeleteAllForUser(UserWithRandomTokens);
+
+        await AssertStrictDeleteThrows(UserWithRandomTokens, ValidToken1.RefreshToken);
+        await AssertStrictDeleteThrows(UserWithRandomTokens, ValidToken2.RefreshToken);
+    }
+    
+    [Fact]
+    public async Task Add_AddToken_SuccessfulStrictDelete()
+    {
+        await Repository.Add(UserWithRandomTokens, new Guid("8df2e98a-55be-48fe-8a0e-fa870aa601e9"));
+        await Repository.StrictDelete(UserWithRandomTokens, new Guid("8df2e98a-55be-48fe-8a0e-fa870aa601e9"));
+    }
+
+    public async Task AssertStrictDeleteThrows(UserId userId, Guid token)
+    {
+        await Assert.ThrowsAsync<RefreshTokenNotFoundException>(async () =>
+        {
+            await Repository.StrictDelete(userId, token);
         });
     }
-
-    private string BuildKey(Guid refreshToken)
+    
+    public string SerializeRefreshTokens(List<TimestampRefreshToken> refreshTokens)
     {
-        return $"refresh-token-{refreshToken.ToString()}";
+        return new JArray(refreshTokens.Select(JObject.FromObject).ToList()).ToString();
+    }
+
+    private string BuildKey(UserId userId)
+    {
+        return $"{userId.ToString()}-refresh-tokens";
     }
 
     public void Dispose()

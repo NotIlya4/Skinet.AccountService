@@ -1,4 +1,4 @@
-﻿namespace Infrastructure;
+﻿namespace Domain.Primitives;
 
 public readonly struct UserId
 {

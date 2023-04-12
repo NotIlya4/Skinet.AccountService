@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Domain.Primitives;
 using Infrastructure;
 using Infrastructure.JwtToken;
 using Microsoft.IdentityModel.Logging;

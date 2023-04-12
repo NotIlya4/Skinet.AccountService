@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using Infrastructure.JwtToken;
-using Infrastructure.RefreshTokenPersistance;
+using Infrastructure.RefreshToken;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Properties;
@@ -22,6 +22,11 @@ public class ParametersProvider
     private string GetJwtTokenIssuer()
     {
         return GetRequiredParameter<string>("JwtToken:Issuer");
+    }
+    
+    private string GetJwtTokenAudience()
+    {
+        return GetRequiredParameter<string>("JwtToken:Audience");
     }
 
     private TimeSpan GetRefreshTokenExpireTime()
@@ -49,6 +54,7 @@ public class ParametersProvider
         return new JwtTokenManagerOptions()
         {
             Issuer = GetJwtTokenIssuer(),
+            Audience = GetJwtTokenAudience(),
             JwtTokenSecret = GetJwtTokenSecret(),
             JwtTokenExpireTime = GetJwtTokenExpireTime()
         };
