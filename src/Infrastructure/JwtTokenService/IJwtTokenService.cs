@@ -4,7 +4,7 @@ namespace Infrastructure.JwtTokenService;
 
 public interface IJwtTokenService
 {
-    public Task<JwtTokenPair> UpdatePair(Guid refreshToken);
+    public Task<JwtTokenPair> UpdatePair(UserId userId, Guid refreshToken);
     public Task ExpireAllRefreshTokens(UserId userId);
     
 }

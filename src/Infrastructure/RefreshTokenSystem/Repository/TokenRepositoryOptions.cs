@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.RefreshToken;
+﻿namespace Infrastructure.RefreshTokenSystem.Repository;
 
 public record TokenRepositoryOptions
 {

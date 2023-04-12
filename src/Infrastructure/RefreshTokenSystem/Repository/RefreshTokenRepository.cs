@@ -1,22 +1,23 @@
-﻿using System.Text.Json;
-using Domain.Primitives;
+﻿using Domain.Primitives;
 using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
 
-namespace Infrastructure.RefreshToken;
+namespace Infrastructure.RefreshTokenSystem.Repository;
 
 public class RefreshTokenRepository : IRefreshTokenRepository
 {
     private readonly IDatabase _redis;
+    private readonly RefreshTokenSerializer _serializer;
     private readonly TokenRepositoryOptions _options;
 
-    public RefreshTokenRepository(IDatabase redis, TokenRepositoryOptions options)
+    public RefreshTokenRepository(IDatabase redis, RefreshTokenSerializer serializer, TokenRepositoryOptions options)
     {
         _redis = redis;
+        _serializer = serializer;
         _options = options;
     }
 
-    public async Task Add(UserId userId, Guid token)
+    public async Task Add(UserId userId, RefreshToken token)
     {
         ValidRefreshTokenCollection tokens = await Get(userId);
         
@@ -25,7 +26,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         await Set(tokens, userId);
     }
 
-    public async Task StrictDelete(UserId userId, Guid token)
+    public async Task StrictDelete(UserId userId, RefreshToken token)
     {
         ValidRefreshTokenCollection tokens = await Get(userId);
 
@@ -46,7 +47,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         ValidRefreshTokenCollection refreshTokens;
         if (redisValue.HasValue)
         {
-            refreshTokens = DeserializeRefreshTokens(redisValue.ToString());
+            refreshTokens = _serializer.DeserializeCollection(redisValue.ToString(), _options.JwtRefreshTokenExpireTime);
         }
         else
         {
@@ -58,19 +59,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
 
     private async Task Set(ValidRefreshTokenCollection refreshTokens, UserId userId)
     {
-        await _redis.StringSetAsync(BuildKey(userId), SerializeRefreshTokens(refreshTokens));
-    }
-
-    private string SerializeRefreshTokens(ValidRefreshTokenCollection refreshToken)
-    {
-        return new JArray(refreshToken.ToList().Select(JObject.FromObject).ToList()).ToString();
-    }
-
-    private ValidRefreshTokenCollection DeserializeRefreshTokens(string rawRefreshToken)
-    {
-        return new ValidRefreshTokenCollection(
-            JArray.Parse(rawRefreshToken).ToObject<List<TimestampRefreshToken>>()!,
-            _options.JwtRefreshTokenExpireTime);
+        await _redis.StringSetAsync(BuildKey(userId), _serializer.SerializeCollection(refreshTokens));
     }
 
     private string BuildKey(UserId userId)

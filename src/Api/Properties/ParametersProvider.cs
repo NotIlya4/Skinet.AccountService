@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using Infrastructure.JwtToken;
-using Infrastructure.RefreshToken;
+using Infrastructure.RefreshTokenSystem.Repository;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Properties;
