@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.JwtToken;
+﻿namespace Infrastructure.JwtTokenManager;
 
 public class InvalidJwtTokenException : Exception
 {

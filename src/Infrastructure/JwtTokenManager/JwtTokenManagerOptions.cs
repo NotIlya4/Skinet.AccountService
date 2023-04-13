@@ -1,11 +1,11 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace Infrastructure.JwtToken;
+namespace Infrastructure.JwtTokenManager;
 
 public class JwtTokenManagerOptions
 {
-    public required SymmetricSecurityKey JwtTokenSecret { get; init; }
-    public required TimeSpan JwtTokenExpireTime { get; init; }
+    public required SymmetricSecurityKey Secret { get; init; }
+    public required TimeSpan Expire { get; init; }
     public required string Issuer { get; init; }
     public required string Audience { get; init; }
 }

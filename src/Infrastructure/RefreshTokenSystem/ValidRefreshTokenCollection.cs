@@ -31,6 +31,16 @@ public readonly record struct ValidRefreshTokenCollection
         }
     }
 
+    public void EnsureDeleted(RefreshToken token)
+    {
+        TimestampRefreshToken? tokenToDelete = _refreshTokens.FirstOrDefault(t => t.RefreshToken == token);
+
+        if (tokenToDelete is not null)
+        {
+            _refreshTokens.Remove(tokenToDelete);
+        }
+    }
+
     public List<TimestampRefreshToken> ToList()
     {
         return _refreshTokens;

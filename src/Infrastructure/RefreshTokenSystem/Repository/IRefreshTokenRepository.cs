@@ -6,5 +6,6 @@ public interface IRefreshTokenRepository
 {
     public Task Add(UserId userId, RefreshToken token);
     public Task StrictDelete(UserId userId, RefreshToken token);
+    public Task EnsureDeleted(UserId userId, RefreshToken token);
     public Task DeleteAllForUser(UserId userId);
 }

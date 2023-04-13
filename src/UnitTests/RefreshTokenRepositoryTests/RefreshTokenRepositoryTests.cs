@@ -26,7 +26,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         Serializer = new RefreshTokenSerializer();
 
         Repository = new RefreshTokenRepository(Redis, Serializer,
-            new TokenRepositoryOptions() { JwtRefreshTokenExpireTime = TimeSpan.FromDays(1) });
+            new RefreshTokenRepositoryOptions() { Expire = TimeSpan.FromDays(1) });
 
         ExpiredToken1 = new TimestampRefreshToken()
             { Issued = DateTime.UtcNow.AddDays(-3), RefreshToken = new RefreshToken(new Guid("7e2311f4-c9ee-40de-b5c4-b4f11977d80f")) };

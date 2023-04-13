@@ -1,10 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Domain.Primitives;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Infrastructure.JwtToken;
+namespace Infrastructure.JwtTokenManager;
 
 public class JwtTokenManager : IJwtTokenManager
 {
@@ -19,7 +18,7 @@ public class JwtTokenManager : IJwtTokenManager
         {
             ValidIssuer = options.Issuer,
             ValidAudience = options.Audience,
-            IssuerSigningKey = options.JwtTokenSecret,
+            IssuerSigningKey = options.Secret,
             ValidateLifetime = true,
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -28,7 +27,7 @@ public class JwtTokenManager : IJwtTokenManager
     
     public string CreateJwtToken(UserId userId)
     {
-        SigningCredentials credentials = new(_options.JwtTokenSecret, SecurityAlgorithms.HmacSha256);
+        SigningCredentials credentials = new(_options.Secret, SecurityAlgorithms.HmacSha256);
         
         Claim[] claims = {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
@@ -40,7 +39,7 @@ public class JwtTokenManager : IJwtTokenManager
         SecurityTokenDescriptor tokenDescriptor = new()
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.Add(_options.JwtTokenExpireTime),
+            Expires = DateTime.UtcNow.Add(_options.Expire),
             SigningCredentials = credentials
         };
 

@@ -1,6 +1,6 @@
 ﻿using Domain.Primitives;
 
-namespace Infrastructure.JwtToken;
+namespace Infrastructure.JwtTokenManager;
 
 public interface IJwtTokenManager
 {

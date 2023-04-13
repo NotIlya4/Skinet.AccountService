@@ -1,5 +1,6 @@
 ﻿using System.Text;
-using Infrastructure.JwtToken;
+using Api.Extensions;
+using Infrastructure.JwtTokenManager;
 using Infrastructure.RefreshTokenSystem.Repository;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,75 +15,33 @@ public class ParametersProvider
         _config = config;
     }
 
-    private TimeSpan GetJwtTokenExpireTime()
+    public RefreshTokenRepositoryOptions GetRefreshTokenRepositoryOptions()
     {
-        return GetTimeSpan("JwtToken:ExpireTime");
-    }
-
-    private string GetJwtTokenIssuer()
-    {
-        return GetRequiredParameter<string>("JwtToken:Issuer");
-    }
-    
-    private string GetJwtTokenAudience()
-    {
-        return GetRequiredParameter<string>("JwtToken:Audience");
-    }
-
-    private TimeSpan GetRefreshTokenExpireTime()
-    {
-        return GetTimeSpan("RefreshToken:ExpireTime");
-    }
-
-    private SymmetricSecurityKey GetJwtTokenSecret()
-    {
-        string rawSecret = GetRequiredParameter<string>("JwtToken:Secret");
-        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(rawSecret));
-    }
-
-    public TokenRepositoryOptions GetTokenRepositoryOptions()
-    {
-        TimeSpan refreshTokenExpire = GetRefreshTokenExpireTime();
-        return new TokenRepositoryOptions()
-        {
-            JwtRefreshTokenExpireTime = refreshTokenExpire
-        };
+        return _config.GetRefreshTokenRepositoryOptions("RefreshTokenRepositoryOptions");
     }
 
     public JwtTokenManagerOptions GetJwtTokenManagerOptions()
     {
-        return new JwtTokenManagerOptions()
-        {
-            Issuer = GetJwtTokenIssuer(),
-            Audience = GetJwtTokenAudience(),
-            JwtTokenSecret = GetJwtTokenSecret(),
-            JwtTokenExpireTime = GetJwtTokenExpireTime()
-        };
+        return _config.GetJwtTokenManagerOptions("JwtTokenManagerOptions");
     }
 
-    private TimeSpan GetTimeSpan(IConfiguration config, string key)
+    public string GetSqlServer()
     {
-        int milliseconds = GetRequiredParameter<int>(config, key);
-        return TimeSpan.FromMilliseconds(milliseconds);
+        return _config.GetSqlServerConnectionString("SqlServer");
+    }
+    
+    public string GetRedis()
+    {
+        return _config.GetRedisConnectionString("Redis");
     }
 
-    private TimeSpan GetTimeSpan(string key)
+    public bool AutoMigrate()
     {
-        return GetTimeSpan(_config, key);
+        return _config.GetRequiredValue<bool>("AutoMigrate");
     }
 
-    private T GetRequiredParameter<T>(IConfiguration config, string key)
+    public bool AutoSeed()
     {
-        T? value = config.GetValue<T>(key);
-        if (value is null)
-        {
-            throw new ParameterNotFoundException(key);
-        }
-        return value;
-    }
-
-    private T GetRequiredParameter<T>(string key)
-    {
-        return GetRequiredParameter<T>(_config, key);
+        return _config.GetRequiredValue<bool>("AutoSeed");
     }
 }

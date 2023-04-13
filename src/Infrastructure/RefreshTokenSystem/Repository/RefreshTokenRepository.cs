@@ -8,9 +8,9 @@ public class RefreshTokenRepository : IRefreshTokenRepository
 {
     private readonly IDatabase _redis;
     private readonly RefreshTokenSerializer _serializer;
-    private readonly TokenRepositoryOptions _options;
+    private readonly RefreshTokenRepositoryOptions _options;
 
-    public RefreshTokenRepository(IDatabase redis, RefreshTokenSerializer serializer, TokenRepositoryOptions options)
+    public RefreshTokenRepository(IDatabase redis, RefreshTokenSerializer serializer, RefreshTokenRepositoryOptions options)
     {
         _redis = redis;
         _serializer = serializer;
@@ -35,6 +35,15 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         await Set(tokens, userId);
     }
 
+    public async Task EnsureDeleted(UserId userId, RefreshToken token)
+    {
+        ValidRefreshTokenCollection tokens = await Get(userId);
+        
+        tokens.EnsureDeleted(token);
+
+        await Set(tokens, userId);
+    }
+
     public async Task DeleteAllForUser(UserId userId)
     {
         await _redis.KeyDeleteAsync(BuildKey(userId));
@@ -47,11 +56,11 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         ValidRefreshTokenCollection refreshTokens;
         if (redisValue.HasValue)
         {
-            refreshTokens = _serializer.DeserializeCollection(redisValue.ToString(), _options.JwtRefreshTokenExpireTime);
+            refreshTokens = _serializer.DeserializeCollection(redisValue.ToString(), _options.Expire);
         }
         else
         {
-            refreshTokens = new ValidRefreshTokenCollection(new List<TimestampRefreshToken>(), _options.JwtRefreshTokenExpireTime);
+            refreshTokens = new ValidRefreshTokenCollection(new List<TimestampRefreshToken>(), _options.Expire);
         }
 
         return refreshTokens;

@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Domain.Primitives;
 using Infrastructure;
-using Infrastructure.JwtToken;
+using Infrastructure.JwtTokenManager;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 
@@ -23,8 +23,8 @@ public class JwtTokenManagerTests
         {
             Issuer = "AccountService",
             Audience = "Api",
-            JwtTokenSecret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1tsJusT@S@mpleP@ssword!")),
-            JwtTokenExpireTime = TimeSpan.FromMinutes(15),
+            Secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1tsJusT@S@mpleP@ssword!")),
+            Expire = TimeSpan.FromMinutes(15),
         };
         Manager = new JwtTokenManager(Options);
         RawToken = Manager.CreateJwtToken(UserId);
@@ -86,7 +86,7 @@ public class JwtTokenManagerTests
             claims: token.Claims,
             notBefore: notBefore,
             expires: expires,
-            signingCredentials: new SigningCredentials(Options.JwtTokenSecret, SecurityAlgorithms.HmacSha256));
+            signingCredentials: new SigningCredentials(Options.Secret, SecurityAlgorithms.HmacSha256));
     }
 
     private string Serialize(JwtSecurityToken token)
