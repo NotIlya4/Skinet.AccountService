@@ -1,5 +1,4 @@
-﻿using Domain.Primitives;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 
 namespace Infrastructure.RefreshTokenSystem;
 
@@ -18,7 +17,7 @@ public class RefreshTokenSerializer
         return new TimestampRefreshToken()
         {
             Issued = rawRefreshToken[nameof(TimestampRefreshToken.Issued)]!.ToObject<DateTime>(),
-            RefreshToken = new RefreshToken(rawRefreshToken[nameof(TimestampRefreshToken.RefreshToken)]!.Value<string>()!)
+            RefreshToken = new Guid(rawRefreshToken[nameof(TimestampRefreshToken.RefreshToken)]!.Value<string>()!)
         };
     }
 

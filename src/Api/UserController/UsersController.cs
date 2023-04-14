@@ -1,5 +1,5 @@
 ﻿using Api.UserController.Views;
-using Domain.Primitives;
+using Domain.Entities;
 using Infrastructure.JwtTokenService;
 using Infrastructure.UserService;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +12,13 @@ public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly ViewMapper _mapper;
+    private readonly EnumParser _enumParser;
 
-    public UsersController(IUserService userService, ViewMapper mapper)
+    public UsersController(IUserService userService, ViewMapper mapper, EnumParser enumParser)
     {
         _userService = userService;
         _mapper = mapper;
+        _enumParser = enumParser;
     }
 
     [HttpPost]
@@ -24,7 +26,8 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<JwtTokenPairView>> Register(RegisterCredentialsView registerCredentialsView)
     {
         JwtTokenPair jwtTokenPair = await _userService.Register(registerCredentialsView.Email, registerCredentialsView.Password);
-        return Ok(_mapper.MapJwtTokenPair(jwtTokenPair));
+        JwtTokenPairView view = _mapper.MapJwtTokenPair(jwtTokenPair);
+        return Ok(view);
     }
 
     [HttpGet]
@@ -32,14 +35,15 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<JwtTokenPairView>> Login([FromQuery] RegisterCredentialsView registerCredentialsView)
     {
         JwtTokenPair jwtTokenPair = await _userService.Login(registerCredentialsView.Email, registerCredentialsView.Password);
-        return Ok(_mapper.MapJwtTokenPair(jwtTokenPair));
+        JwtTokenPairView view = _mapper.MapJwtTokenPair(jwtTokenPair);
+        return Ok(view);
     }
 
     [HttpGet]
     [Route("logout")]
     public async Task<ActionResult> Logout(string userId, string refreshToken)
     {
-        await _userService.Logout(new UserId(userId), new RefreshToken(refreshToken));
+        await _userService.Logout(new Guid(userId), new Guid(refreshToken));
         return NoContent();
     }
     
@@ -47,7 +51,7 @@ public class UsersController : ControllerBase
     [Route("logoutFromAllDevices")]
     public async Task<ActionResult> LogoutFromAllDevices(string userId)
     {
-        await _userService.LogOutInAllEntries(new UserId(userId));
+        await _userService.LogOutInAllEntries(new Guid(userId));
         return NoContent();
     }
     
@@ -55,8 +59,9 @@ public class UsersController : ControllerBase
     [Route("updateJwtPair")]
     public async Task<ActionResult<JwtTokenPairView>> UpdateJwtPair(string userId, string refreshToken)
     {
-        JwtTokenPair jwtTokenPair = await _userService.UpdateJwtPair(new UserId(userId), new RefreshToken(refreshToken));
-        return Ok(_mapper.MapJwtTokenPair(jwtTokenPair));
+        JwtTokenPair jwtTokenPair = await _userService.UpdateJwtPair(new Guid(userId), new Guid(refreshToken));
+        JwtTokenPairView view = _mapper.MapJwtTokenPair(jwtTokenPair);
+        return Ok(view);
     }
 
     [HttpGet]
@@ -65,5 +70,14 @@ public class UsersController : ControllerBase
     {
         _userService.ValidateJwtToken(jwtToken);
         return NoContent();
+    }
+
+    [HttpGet]
+    [Route("{property}/{value}")]
+    public async Task<ActionResult<UserView>> GetUser(string property, string value)
+    {
+        User address = await _userService.GetUser(_enumParser.Parse<UserStrictFilterProperty>(property), value);
+        UserView addressView = _mapper.MapUser(address);
+        return Ok(addressView);
     }
 }

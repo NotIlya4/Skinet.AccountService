@@ -1,5 +1,4 @@
-﻿using Domain.Primitives;
-using Infrastructure.RefreshTokenSystem.Repository;
+﻿using Infrastructure.RefreshTokenSystem.Repository;
 
 namespace Infrastructure.RefreshTokenSystem;
 
@@ -16,12 +15,12 @@ public readonly record struct ValidRefreshTokenCollection
         CleanExpireTokens();
     }
 
-    public void Add(RefreshToken token)
+    public void Add(Guid token)
     {
         _refreshTokens.Add(new TimestampRefreshToken() {Issued = DateTime.UtcNow, RefreshToken = token});
     }
 
-    public void StrictDelete(RefreshToken token)
+    public void StrictDelete(Guid token)
     {
         TimestampRefreshToken? tokenToDelete = _refreshTokens.FirstOrDefault(t => t.RefreshToken == token);
 
@@ -31,7 +30,7 @@ public readonly record struct ValidRefreshTokenCollection
         }
     }
 
-    public void EnsureDeleted(RefreshToken token)
+    public void EnsureDeleted(Guid token)
     {
         TimestampRefreshToken? tokenToDelete = _refreshTokens.FirstOrDefault(t => t.RefreshToken == token);
 

@@ -1,5 +1,5 @@
 ﻿using Api.UserController.Views;
-using Domain.Primitives;
+using Domain.Entities;
 using Infrastructure.JwtTokenService;
 
 namespace Api.UserController;
@@ -20,7 +20,29 @@ public class ViewMapper
         return new JwtTokenPair()
         {
             JwtToken = jwtTokenPairView.JwtToken,
-            RefreshToken = new RefreshToken(jwtTokenPairView.RefreshToken)
+            RefreshToken = new Guid(jwtTokenPairView.RefreshToken)
+        };
+    }
+
+    public UserView MapUser(User user)
+    {
+        if (user.Address is null)
+        {
+            return new UserView()
+            {
+                Id = user.Id.ToString(),
+                Email = user.Email,
+            };
+        }
+        
+        return new UserView()
+        {
+            Id = user.Id.ToString(),
+            Email = user.Email,
+            Country = user.Address.City,
+            City = user.Address.City,
+            Street = user.Address.Street,
+            Zipcode = user.Address.Zipcode
         };
     }
 }

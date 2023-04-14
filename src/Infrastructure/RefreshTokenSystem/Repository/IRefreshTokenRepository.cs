@@ -1,11 +1,9 @@
-﻿using Domain.Primitives;
-
-namespace Infrastructure.RefreshTokenSystem.Repository;
+﻿namespace Infrastructure.RefreshTokenSystem.Repository;
 
 public interface IRefreshTokenRepository
 {
-    public Task Add(UserId userId, RefreshToken token);
-    public Task StrictDelete(UserId userId, RefreshToken token);
-    public Task EnsureDeleted(UserId userId, RefreshToken token);
-    public Task DeleteAllForUser(UserId userId);
+    public Task Add(Guid userId, Guid token);
+    public Task StrictDelete(Guid userId, Guid token);
+    public Task EnsureDeleted(Guid userId, Guid token);
+    public Task DeleteAllForUser(Guid userId);
 }

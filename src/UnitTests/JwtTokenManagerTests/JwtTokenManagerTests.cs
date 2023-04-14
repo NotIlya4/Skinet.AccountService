@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Domain.Primitives;
 using Infrastructure.JwtTokenManager;
 using Microsoft.IdentityModel.Tokens;
 
@@ -10,7 +9,7 @@ public class JwtTokenManagerTests
 {
     public JwtTokenManager Manager { get; }
     public JwtTokenManagerOptions Options { get; }
-    public UserId UserId { get; } = new UserId("a6e96499-c80a-474d-a5d4-0ad065eb19c0");
+    public Guid UserId { get; } = new Guid("a6e96499-c80a-474d-a5d4-0ad065eb19c0");
     public string RawToken { get; }
     public JwtSecurityToken Token { get; }
     
@@ -32,7 +31,7 @@ public class JwtTokenManagerTests
     [Fact]
     public void CreateJwtToken_ValidToken_JwtTokenContainUserId()
     {
-        UserId userId = new UserId(Token.Subject);
+        Guid userId = new Guid(Token.Subject);
         
         Assert.Equal(UserId, userId);
     }

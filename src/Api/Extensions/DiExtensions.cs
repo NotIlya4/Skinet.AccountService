@@ -2,13 +2,13 @@
 using Api.ExeptionCatching;
 using Api.UserController;
 using ExceptionCatcherMiddleware.Extensions;
+using Infrastructure.EntityFramework;
+using Infrastructure.EntityFramework.Models;
 using Infrastructure.JwtTokenManager;
 using Infrastructure.JwtTokenService;
 using Infrastructure.RefreshTokenSystem;
 using Infrastructure.RefreshTokenSystem.Repository;
 using Infrastructure.UserService;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -27,6 +27,7 @@ public static class DiExtensions
     public static void AddUserService(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<EnumParser>();
     }
 
     public static void AddMappers(this IServiceCollection services)
@@ -59,7 +60,7 @@ public static class DiExtensions
 
     public static void AddDbContextForIdentity(this IServiceCollection services, string connectionString)
     {
-        services.AddDbContext<IdentityDbContext>(builder =>
+        services.AddDbContext<AppDbContext>(builder =>
         {
             builder.UseSqlServer(connectionString, b => b.MigrationsAssembly("Infrastructure"));
         });
@@ -67,7 +68,7 @@ public static class DiExtensions
     
     public static void AddConfiguredIdentity(this IServiceCollection services)
     {
-        services.AddIdentityCore<IdentityUser>()
-            .AddEntityFrameworkStores<IdentityDbContext>();
+        services.AddIdentityCore<UserData>()
+            .AddEntityFrameworkStores<AppDbContext>();
     }
 }

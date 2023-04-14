@@ -1,5 +1,4 @@
-﻿using Domain.Primitives;
-using Infrastructure.JwtTokenManager;
+﻿using Infrastructure.JwtTokenManager;
 using Infrastructure.RefreshTokenSystem.Repository;
 
 namespace Infrastructure.JwtTokenService;
@@ -15,9 +14,9 @@ public class JwtTokenService : IJwtTokenService
         _jwtTokenManager = jwtTokenManager;
     }
 
-    public async Task<JwtTokenPair> AddNewRefreshToken(UserId userId)
+    public async Task<JwtTokenPair> AddNewRefreshToken(Guid userId)
     {
-        RefreshToken newRefreshToken = new RefreshToken(Guid.NewGuid());
+        Guid newRefreshToken = Guid.NewGuid();
         
         await _refreshTokenRepository.Add(userId, newRefreshToken);
 
@@ -30,18 +29,18 @@ public class JwtTokenService : IJwtTokenService
         };
     }
 
-    public async Task<JwtTokenPair> UpdatePair(UserId userId, RefreshToken refreshToken)
+    public async Task<JwtTokenPair> UpdatePair(Guid userId, Guid refreshToken)
     {
         await _refreshTokenRepository.StrictDelete(userId, refreshToken);
         return await AddNewRefreshToken(userId);
     }
 
-    public async Task ExpireRefreshToken(UserId userId, RefreshToken refreshToken)
+    public async Task ExpireRefreshToken(Guid userId, Guid refreshToken)
     {
         await _refreshTokenRepository.EnsureDeleted(userId, refreshToken);
     }
 
-    public async Task ExpireAllRefreshTokens(UserId userId)
+    public async Task ExpireAllRefreshTokens(Guid userId)
     {
         await _refreshTokenRepository.DeleteAllForUser(userId);
     }

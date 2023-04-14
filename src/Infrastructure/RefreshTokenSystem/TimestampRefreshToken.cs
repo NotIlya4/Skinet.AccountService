@@ -1,9 +1,7 @@
-﻿using Domain.Primitives;
-
-namespace Infrastructure.RefreshTokenSystem;
+﻿namespace Infrastructure.RefreshTokenSystem;
 
 public record TimestampRefreshToken
 {
-    public required RefreshToken RefreshToken { get; init; }
+    public required Guid RefreshToken { get; init; }
     public required DateTime Issued { get; init; }
 }

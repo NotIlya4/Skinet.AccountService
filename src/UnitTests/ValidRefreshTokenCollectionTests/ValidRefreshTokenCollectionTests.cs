@@ -1,16 +1,15 @@
-﻿using Domain.Primitives;
-using Infrastructure.RefreshTokenSystem;
+﻿using Infrastructure.RefreshTokenSystem;
 
 namespace UnitTests.ValidRefreshTokenCollectionTests;
 
 public class ValidRefreshTokenCollectionTests
 {
     public TimeSpan Expire { get; } = TimeSpan.FromMinutes(15);
-    public RefreshToken RefreshToken1 { get; } = new RefreshToken(new Guid("43af8d5b-b40c-4418-9a7c-f09439a10728"));
-    public RefreshToken RefreshToken2 { get; } = new RefreshToken(new Guid("cdf123cc-427a-448b-94bd-c22f06a0c8f5"));
-    public RefreshToken RefreshToken3 { get; } = new RefreshToken(new Guid("f19ad07e-5459-4cc1-8bfe-d21a4c36bd06"));
-    public RefreshToken RefreshToken4 { get; } = new RefreshToken(new Guid("396d7559-9d7a-448d-bf71-44fd103cba84"));
-    public RefreshToken RefreshToken5 { get; } = new RefreshToken(new Guid("0a0517ef-6bae-4444-86d7-5891e0af3ff3"));
+    public Guid RefreshToken1 { get; } = new("43af8d5b-b40c-4418-9a7c-f09439a10728");
+    public Guid RefreshToken2 { get; } = new("cdf123cc-427a-448b-94bd-c22f06a0c8f5");
+    public Guid RefreshToken3 { get; } = new ("f19ad07e-5459-4cc1-8bfe-d21a4c36bd06");
+    public Guid RefreshToken4 { get; } = new("396d7559-9d7a-448d-bf71-44fd103cba84");
+    public Guid RefreshToken5 { get; } = new("0a0517ef-6bae-4444-86d7-5891e0af3ff3");
 
     [Fact]
     public void Constructor_RandomValid_RemainOnlyValid()
@@ -23,13 +22,13 @@ public class ValidRefreshTokenCollectionTests
             new TimestampRefreshToken() { RefreshToken = RefreshToken2, Issued = DateTime.UtcNow.AddMinutes(-3) },
             new TimestampRefreshToken() { RefreshToken = RefreshToken5, Issued = DateTime.UtcNow.AddMinutes(0) },
         };
-        List<RefreshToken> expect = new()
+        List<Guid> expect = new()
         {
             RefreshToken2,
             RefreshToken5
         };
 
-        List<RefreshToken> tokensAfterConstructor = ApplyConstructor(refreshTokens);
+        List<Guid> tokensAfterConstructor = ApplyConstructor(refreshTokens);
         
         Assert.Equal(expect, tokensAfterConstructor);
     }
@@ -44,7 +43,7 @@ public class ValidRefreshTokenCollectionTests
             new TimestampRefreshToken() { RefreshToken = RefreshToken1, Issued = DateTime.UtcNow.AddMinutes(-3) },
             new TimestampRefreshToken() { RefreshToken = RefreshToken2, Issued = DateTime.UtcNow.AddMinutes(-2) }
         };
-        List<RefreshToken> expect = new()
+        List<Guid> expect = new()
         {
             RefreshToken3,
             RefreshToken4,
@@ -52,7 +51,7 @@ public class ValidRefreshTokenCollectionTests
             RefreshToken2
         };
 
-        List<RefreshToken> tokensAfterConstructor = ApplyConstructor(refreshTokens);
+        List<Guid> tokensAfterConstructor = ApplyConstructor(refreshTokens);
         
         Assert.Equal(expect, tokensAfterConstructor);
     }
@@ -68,14 +67,14 @@ public class ValidRefreshTokenCollectionTests
             new TimestampRefreshToken() { RefreshToken = RefreshToken2, Issued = DateTime.UtcNow.AddMinutes(-37) },
             new TimestampRefreshToken() { RefreshToken = RefreshToken5, Issued = DateTime.UtcNow.AddMinutes(-33) },
         };
-        List<RefreshToken> expect = new();
+        List<Guid> expect = new();
 
-        List<RefreshToken> tokensAfterConstructor = ApplyConstructor(refreshTokens);
+        List<Guid> tokensAfterConstructor = ApplyConstructor(refreshTokens);
         
         Assert.Equal(expect, tokensAfterConstructor);
     }
 
-    public List<RefreshToken> ApplyConstructor(List<TimestampRefreshToken> tokens)
+    public List<Guid> ApplyConstructor(List<TimestampRefreshToken> tokens)
     {
         ValidRefreshTokenCollection collection = new(tokens, Expire);
         return collection.ToList().Select(t => t.RefreshToken).ToList();

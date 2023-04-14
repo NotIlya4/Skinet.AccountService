@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Domain.Primitives;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.JwtTokenManager;
@@ -25,7 +24,7 @@ public class JwtTokenManager : IJwtTokenManager
         };
     }
     
-    public string CreateJwtToken(UserId userId)
+    public string CreateJwtToken(Guid userId)
     {
         SigningCredentials credentials = new(_options.Secret, SecurityAlgorithms.HmacSha256);
         

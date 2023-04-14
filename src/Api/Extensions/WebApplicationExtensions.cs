@@ -1,5 +1,5 @@
 ﻿using Api.Properties;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Infrastructure.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Extensions;
@@ -11,7 +11,7 @@ public static class WebApplicationExtensions
         if (parametersProvider.AutoMigrate())
         {
             var scope = app.Services.CreateScope();
-            IdentityDbContext dbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+            AppDbContext dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             dbContext.Database.Migrate();
             scope.Dispose();
         }

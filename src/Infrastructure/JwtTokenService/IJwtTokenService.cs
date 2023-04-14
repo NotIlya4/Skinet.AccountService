@@ -1,12 +1,10 @@
-﻿using Domain.Primitives;
-
-namespace Infrastructure.JwtTokenService;
+﻿namespace Infrastructure.JwtTokenService;
 
 public interface IJwtTokenService
 {
-    public Task<JwtTokenPair> AddNewRefreshToken(UserId userId);
-    public Task<JwtTokenPair> UpdatePair(UserId userId, RefreshToken refreshToken);
-    public Task ExpireRefreshToken(UserId userId, RefreshToken refreshToken);
-    public Task ExpireAllRefreshTokens(UserId userId);
+    public Task<JwtTokenPair> AddNewRefreshToken(Guid userId);
+    public Task<JwtTokenPair> UpdatePair(Guid userId, Guid refreshToken);
+    public Task ExpireRefreshToken(Guid userId, Guid refreshToken);
+    public Task ExpireAllRefreshTokens(Guid userId);
     public void ValidateJwtToken(string jwtToken);
 }

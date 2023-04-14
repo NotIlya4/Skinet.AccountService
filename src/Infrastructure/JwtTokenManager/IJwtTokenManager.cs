@@ -1,9 +1,7 @@
-﻿using Domain.Primitives;
-
-namespace Infrastructure.JwtTokenManager;
+﻿namespace Infrastructure.JwtTokenManager;
 
 public interface IJwtTokenManager
 {
-    public string CreateJwtToken(UserId userId);
+    public string CreateJwtToken(Guid userId);
     public void Validate(string token);
 }

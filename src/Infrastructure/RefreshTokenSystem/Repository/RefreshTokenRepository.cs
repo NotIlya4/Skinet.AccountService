@@ -1,5 +1,4 @@
-﻿using Domain.Primitives;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 
 namespace Infrastructure.RefreshTokenSystem.Repository;
 
@@ -16,7 +15,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         _options = options;
     }
 
-    public async Task Add(UserId userId, RefreshToken token)
+    public async Task Add(Guid userId, Guid token)
     {
         ValidRefreshTokenCollection tokens = await Get(userId);
         
@@ -25,7 +24,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         await Set(tokens, userId);
     }
 
-    public async Task StrictDelete(UserId userId, RefreshToken token)
+    public async Task StrictDelete(Guid userId, Guid token)
     {
         ValidRefreshTokenCollection tokens = await Get(userId);
 
@@ -34,7 +33,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         await Set(tokens, userId);
     }
 
-    public async Task EnsureDeleted(UserId userId, RefreshToken token)
+    public async Task EnsureDeleted(Guid userId, Guid token)
     {
         ValidRefreshTokenCollection tokens = await Get(userId);
         
@@ -43,12 +42,12 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         await Set(tokens, userId);
     }
 
-    public async Task DeleteAllForUser(UserId userId)
+    public async Task DeleteAllForUser(Guid userId)
     {
         await _redis.KeyDeleteAsync(BuildKey(userId));
     }
 
-    private async Task<ValidRefreshTokenCollection> Get(UserId userId)
+    private async Task<ValidRefreshTokenCollection> Get(Guid userId)
     {
         RedisValue redisValue = await _redis.StringGetAsync(BuildKey(userId));
 
@@ -65,12 +64,12 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         return refreshTokens;
     }
 
-    private async Task Set(ValidRefreshTokenCollection refreshTokens, UserId userId)
+    private async Task Set(ValidRefreshTokenCollection refreshTokens, Guid userId)
     {
         await _redis.StringSetAsync(BuildKey(userId), _serializer.SerializeCollection(refreshTokens), _options.Expire);
     }
 
-    private string BuildKey(UserId userId)
+    private string BuildKey(Guid userId)
     {
         return $"{userId.ToString()}-refresh-tokens";
     }
