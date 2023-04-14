@@ -1,8 +1,6 @@
 ﻿using Domain.Primitives;
-using Infrastructure;
 using Infrastructure.RefreshTokenSystem;
 using Infrastructure.RefreshTokenSystem.Repository;
-using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
 
 namespace UnitTests.RefreshTokenRepositoryTests;

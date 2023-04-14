@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Api.Properties;
 
 namespace Api.Extensions;
 

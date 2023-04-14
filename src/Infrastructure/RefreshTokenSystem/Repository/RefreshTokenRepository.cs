@@ -1,5 +1,4 @@
 ﻿using Domain.Primitives;
-using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
 
 namespace Infrastructure.RefreshTokenSystem.Repository;
@@ -68,7 +67,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
 
     private async Task Set(ValidRefreshTokenCollection refreshTokens, UserId userId)
     {
-        await _redis.StringSetAsync(BuildKey(userId), _serializer.SerializeCollection(refreshTokens));
+        await _redis.StringSetAsync(BuildKey(userId), _serializer.SerializeCollection(refreshTokens), _options.Expire);
     }
 
     private string BuildKey(UserId userId)

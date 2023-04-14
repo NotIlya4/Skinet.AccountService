@@ -1,6 +1,6 @@
-﻿namespace Infrastructure.UserService;
+﻿namespace Api.UserController.Views;
 
-public readonly record struct BasicRegisterCredentials
+public class RegisterCredentialsView
 {
     public required string Email { get; init; }
     public required string Password { get; init; }

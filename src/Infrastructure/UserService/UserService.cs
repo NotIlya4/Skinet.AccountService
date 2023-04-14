@@ -1,9 +1,7 @@
-﻿using System.Security.Claims;
-using Domain.Exceptions;
+﻿using Domain.Exceptions;
 using Domain.Primitives;
 using Infrastructure.JwtTokenService;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Infrastructure.UserService;
 
@@ -11,22 +9,20 @@ public class UserService : IUserService
 {
     private readonly IJwtTokenService _jwtTokenService;
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly SignInManager<IdentityUser> _signInManager;
 
-    public UserService(IJwtTokenService jwtTokenService, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+    public UserService(IJwtTokenService jwtTokenService, UserManager<IdentityUser> userManager)
     {
         _jwtTokenService = jwtTokenService;
         _userManager = userManager;
-        _signInManager = signInManager;
     }
     
-    public async Task<JwtTokenPair> Register(BasicRegisterCredentials registerCredentials)
+    public async Task<JwtTokenPair> Register(string email, string password)
     {
-        IdentityUser user = new(registerCredentials.Email);
+        IdentityUser user = new(email);
         
-        user.Email = registerCredentials.Email;
+        user.Email = email;
         
-        IdentityResult? result = await _userManager.CreateAsync(user, registerCredentials.Password);
+        IdentityResult? result = await _userManager.CreateAsync(user, password);
         
         if (result is null)
         {
@@ -41,32 +37,24 @@ public class UserService : IUserService
         return await _jwtTokenService.AddNewRefreshToken(new UserId(user.Id));
     }
 
-    public async Task<JwtTokenPair> Login(BasicRegisterCredentials registerCredentials)
+    public async Task<JwtTokenPair> Login(string email, string password)
     {
-        SignInResult? result = await _signInManager.PasswordSignInAsync(
-            registerCredentials.Email, 
-            registerCredentials.Password, false, false);
+        IdentityUser? user = await _userManager.FindByEmailAsync(email);
         
-        if (result is null)
-        {
-            throw new Exception("Result is null");
-        }
-
-        if (!result.Succeeded)
-        {
-            throw new ValidationException("Wrong login credentials");
-        }
-
-        IdentityUser? user = await _userManager.FindByEmailAsync(registerCredentials.Email);
         if (user is null)
         {
-            throw new ValidationException("User doesn't exists");
+            throw new ValidationException("User not found");
+        }
+
+        if (!(await _userManager.CheckPasswordAsync(user, password)))
+        {
+            throw new ValidationException("Wrong password");
         }
 
         return await _jwtTokenService.AddNewRefreshToken(new UserId(user.Id));
     }
 
-    public async Task LogOut(UserId userId, RefreshToken refreshToken)
+    public async Task Logout(UserId userId, RefreshToken refreshToken)
     {
         await _jwtTokenService.ExpireRefreshToken(userId, refreshToken);
     }
@@ -79,5 +67,10 @@ public class UserService : IUserService
     public async Task<JwtTokenPair> UpdateJwtPair(UserId userId, RefreshToken refreshToken)
     {
         return await _jwtTokenService.UpdatePair(userId, refreshToken);
+    }
+
+    public void ValidateJwtToken(string jwtToken)
+    {
+        _jwtTokenService.ValidateJwtToken(jwtToken);
     }
 }

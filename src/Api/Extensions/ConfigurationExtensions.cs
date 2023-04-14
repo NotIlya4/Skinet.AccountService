@@ -15,7 +15,7 @@ public static class ConfigurationExtensions
         }
         
         SymmetricSecurityKey secret = new(Encoding.UTF8.GetBytes(config.GetRequiredValue("Secret")));
-        TimeSpan expire = TimeSpan.FromMinutes(config.GetRequiredValue<int>("ExpireMinutes"));
+        TimeSpan expire = TimeSpan.FromMinutes(config.GetRequiredValue<float>("ExpireMinutes"));
         string issuer = config.GetRequiredValue("Issuer");
         string audience = config.GetRequiredValue("Audience");
 
@@ -35,7 +35,7 @@ public static class ConfigurationExtensions
             config = config.GetSection(key);
         }
         
-        TimeSpan expire = TimeSpan.FromHours(config.GetRequiredValue<int>("ExpireHours"));
+        TimeSpan expire = TimeSpan.FromHours(config.GetRequiredValue<float>("ExpireHours"));
 
         return new RefreshTokenRepositoryOptions()
         {

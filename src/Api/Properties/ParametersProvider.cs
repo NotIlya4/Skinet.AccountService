@@ -1,8 +1,6 @@
-﻿using System.Text;
-using Api.Extensions;
+﻿using Api.Extensions;
 using Infrastructure.JwtTokenManager;
 using Infrastructure.RefreshTokenSystem.Repository;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Properties;
 

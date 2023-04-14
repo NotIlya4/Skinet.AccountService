@@ -46,8 +46,8 @@ public class JwtTokenService : IJwtTokenService
         await _refreshTokenRepository.DeleteAllForUser(userId);
     }
 
-    public async Task ValidateJwtToken(string jwtToken)
+    public void ValidateJwtToken(string jwtToken)
     {
-        _jwtTokenManager.ValidateAndGetUserId(jwtToken);
+        _jwtTokenManager.Validate(jwtToken);
     }
 }

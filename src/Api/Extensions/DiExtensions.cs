@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Api.ExeptionCatching;
-using Api.Properties;
+using Api.UserController;
 using ExceptionCatcherMiddleware.Extensions;
 using Infrastructure.JwtTokenManager;
 using Infrastructure.JwtTokenService;
@@ -29,11 +29,25 @@ public static class DiExtensions
         services.AddScoped<IUserService, UserService>();
     }
 
+    public static void AddMappers(this IServiceCollection services)
+    {
+        services.AddScoped<ViewMapper>();
+    }
+
     public static void AddJwtTokenServices(this IServiceCollection services, JwtTokenManagerOptions jwtTokenManagerOptions)
     {
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IJwtTokenManager, JwtTokenManager>();
         services.AddSingleton(jwtTokenManagerOptions);
+    }
+
+    public static void AddRedisForRefreshTokenRepository(this IServiceCollection services, string redisConnectionString)
+    {
+        services.AddSingleton(_ =>
+        {
+            ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnectionString);
+            return connectionMultiplexer.GetDatabase();
+        });
     }
 
     public static void AddRefreshTokenRepository(this IServiceCollection services, RefreshTokenRepositoryOptions options)
@@ -53,6 +67,7 @@ public static class DiExtensions
     
     public static void AddConfiguredIdentity(this IServiceCollection services)
     {
-        services.AddIdentityCore<IdentityUser>().AddEntityFrameworkStores<IdentityDbContext>();
+        services.AddIdentityCore<IdentityUser>()
+            .AddEntityFrameworkStores<IdentityDbContext>();
     }
 }

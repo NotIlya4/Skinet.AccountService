@@ -1,10 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 using Domain.Primitives;
-using Infrastructure;
 using Infrastructure.JwtTokenManager;
-using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace UnitTests.JwtTokenManagerTests;
@@ -63,19 +60,11 @@ public class JwtTokenManagerTests
     }
 
     [Fact]
-    public void ValidateAndGetUserId_ValidToken_PassedUserId()
-    {
-        UserId userId = Manager.ValidateAndGetUserId(RawToken);
-        
-        Assert.Equal(UserId, userId);
-    }
-
-    [Fact]
     public void ValidateAndGetUserId_ExpiredToken_ThrowException()
     {
         var expiredToken = AlterExpires(Token, DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow.AddMinutes(-15));
 
-        Assert.Throws<SecurityTokenExpiredException>(() => { Manager.ValidateAndGetUserId(Serialize(expiredToken)); });
+        Assert.Throws<SecurityTokenExpiredException>(() => { Manager.Validate(Serialize(expiredToken)); });
     }
 
     private JwtSecurityToken AlterExpires(JwtSecurityToken token, DateTime notBefore, DateTime expires)
