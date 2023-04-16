@@ -2,29 +2,29 @@
 
 namespace Infrastructure.RefreshTokenSystem;
 
-public readonly record struct ValidRefreshTokenCollection
+public record ValidRefreshTokenCollection
 {
-    private readonly List<TimestampRefreshToken> _refreshTokens;
-    private readonly TimeSpan _expireIn;
+    private List<TimestampRefreshToken> RefreshTokens { get; }
+    private TimeSpan ExpireIn { get; }
     
     public ValidRefreshTokenCollection(List<TimestampRefreshToken> refreshTokens, TimeSpan expireIn)
     {
-        _refreshTokens = refreshTokens;
-        _expireIn = expireIn;
+        RefreshTokens = refreshTokens;
+        ExpireIn = expireIn;
         
         CleanExpireTokens();
     }
 
     public void Add(Guid token)
     {
-        _refreshTokens.Add(new TimestampRefreshToken() {Issued = DateTime.UtcNow, RefreshToken = token});
+        RefreshTokens.Add(new TimestampRefreshToken(issued: DateTime.UtcNow, refreshToken: token));
     }
 
     public void StrictDelete(Guid token)
     {
-        TimestampRefreshToken? tokenToDelete = _refreshTokens.FirstOrDefault(t => t.RefreshToken == token);
+        TimestampRefreshToken? tokenToDelete = RefreshTokens.FirstOrDefault(t => t.RefreshToken == token);
 
-        if (tokenToDelete is null || !_refreshTokens.Remove(tokenToDelete))
+        if (tokenToDelete is null || !RefreshTokens.Remove(tokenToDelete))
         {
             throw new RefreshTokenNotFoundException(token);
         }
@@ -32,23 +32,23 @@ public readonly record struct ValidRefreshTokenCollection
 
     public void EnsureDeleted(Guid token)
     {
-        TimestampRefreshToken? tokenToDelete = _refreshTokens.FirstOrDefault(t => t.RefreshToken == token);
+        TimestampRefreshToken? tokenToDelete = RefreshTokens.FirstOrDefault(t => t.RefreshToken == token);
 
         if (tokenToDelete is not null)
         {
-            _refreshTokens.Remove(tokenToDelete);
+            RefreshTokens.Remove(tokenToDelete);
         }
     }
 
     public List<TimestampRefreshToken> ToList()
     {
-        return _refreshTokens;
+        return RefreshTokens;
     }
 
     private void CleanExpireTokens()
     {
         int left = -1;
-        int right = _refreshTokens.Count - 1;
+        int right = RefreshTokens.Count - 1;
 
         while (left < right)
         {
@@ -62,9 +62,9 @@ public readonly record struct ValidRefreshTokenCollection
                 mid = (left + right) / 2;
             }
             
-            TimeSpan issueDelta = DateTime.UtcNow - _refreshTokens[mid].Issued;
+            TimeSpan issueDelta = DateTime.UtcNow - RefreshTokens[mid].Issued;
 
-            bool isGoingToBeDeleted = issueDelta >= _expireIn;
+            bool isGoingToBeDeleted = issueDelta >= ExpireIn;
 
             if (isGoingToBeDeleted)
             {
@@ -76,6 +76,6 @@ public readonly record struct ValidRefreshTokenCollection
             }
         }
 
-        _refreshTokens.RemoveRange(0, left + 1);
+        RefreshTokens.RemoveRange(0, left + 1);
     }
 }

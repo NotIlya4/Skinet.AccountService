@@ -2,5 +2,10 @@
 
 public record RefreshTokenRepositoryOptions
 {
-    public required TimeSpan Expire { get; init; }
+    public TimeSpan Expire { get; }
+
+    public RefreshTokenRepositoryOptions(TimeSpan expire)
+    {
+        Expire = expire;
+    }
 }

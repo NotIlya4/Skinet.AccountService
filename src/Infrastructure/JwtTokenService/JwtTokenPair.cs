@@ -1,7 +1,13 @@
 ﻿namespace Infrastructure.JwtTokenService;
 
-public readonly record struct JwtTokenPair
+public record JwtTokenPair
 {
-    public required string JwtToken { get; init; }
-    public required Guid RefreshToken { get; init; }
+    public string JwtToken { get; }
+    public Guid RefreshToken { get; }
+
+    public JwtTokenPair(string jwtToken, Guid refreshToken)
+    {
+        JwtToken = jwtToken;
+        RefreshToken = refreshToken;
+    }
 }

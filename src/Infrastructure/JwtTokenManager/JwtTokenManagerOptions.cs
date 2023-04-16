@@ -2,10 +2,18 @@
 
 namespace Infrastructure.JwtTokenManager;
 
-public class JwtTokenManagerOptions
+public record JwtTokenManagerOptions
 {
-    public required SymmetricSecurityKey Secret { get; init; }
-    public required TimeSpan Expire { get; init; }
-    public required string Issuer { get; init; }
-    public required string Audience { get; init; }
+    public SymmetricSecurityKey Secret { get; }
+    public TimeSpan Expire { get; }
+    public string Issuer { get; }
+    public string Audience { get; }
+
+    public JwtTokenManagerOptions(SymmetricSecurityKey secret, TimeSpan expire, string issuer, string audience)
+    {
+        Secret = secret;
+        Expire = expire;
+        Issuer = issuer;
+        Audience = audience;
+    }
 }

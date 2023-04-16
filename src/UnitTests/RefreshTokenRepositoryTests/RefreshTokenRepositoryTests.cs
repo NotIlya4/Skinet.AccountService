@@ -23,17 +23,21 @@ public class RefreshTokenRepositoryTests : IDisposable
         Serializer = new RefreshTokenSerializer();
 
         Repository = new RefreshTokenRepository(Redis, Serializer,
-            new RefreshTokenRepositoryOptions() { Expire = TimeSpan.FromDays(1) });
+            new RefreshTokenRepositoryOptions(TimeSpan.FromDays(1)));
 
-        ExpiredToken1 = new TimestampRefreshToken()
-            { Issued = DateTime.UtcNow.AddDays(-3), RefreshToken = new Guid("7e2311f4-c9ee-40de-b5c4-b4f11977d80f") };
-        ExpiredToken2 = new TimestampRefreshToken()
-            { Issued = DateTime.UtcNow.AddDays(-2), RefreshToken = new Guid("db3b41d8-7c12-4512-bc41-740d0c77eeb7") };
+        ExpiredToken1 = new TimestampRefreshToken(
+            issued: DateTime.UtcNow.AddDays(-3),
+            refreshToken: new Guid("7e2311f4-c9ee-40de-b5c4-b4f11977d80f"));
+        ExpiredToken2 = new TimestampRefreshToken(
+            issued: DateTime.UtcNow.AddDays(-2),
+            refreshToken: new Guid("db3b41d8-7c12-4512-bc41-740d0c77eeb7"));
 
-        ValidToken1 = new TimestampRefreshToken()
-            { Issued = DateTime.UtcNow.AddHours(-5), RefreshToken = new Guid("960a12f0-aef1-46d7-8b1f-44bf07bb0d86") };
-        ValidToken2 = new TimestampRefreshToken()
-            { Issued = DateTime.UtcNow.AddHours(-2), RefreshToken = new Guid("2624e694-a8ed-4f5d-8a34-e92feca21cc7") };
+        ValidToken1 = new TimestampRefreshToken(
+            issued: DateTime.UtcNow.AddHours(-5),
+            refreshToken: new Guid("960a12f0-aef1-46d7-8b1f-44bf07bb0d86"));
+        ValidToken2 = new TimestampRefreshToken(
+            issued: DateTime.UtcNow.AddHours(-2),
+            refreshToken: new Guid("2624e694-a8ed-4f5d-8a34-e92feca21cc7"));
 
         List<TimestampRefreshToken> randomTokens = new List<TimestampRefreshToken>()
         {

@@ -2,6 +2,12 @@
 
 public record TimestampRefreshToken
 {
-    public required Guid RefreshToken { get; init; }
-    public required DateTime Issued { get; init; }
+    public Guid RefreshToken { get; }
+    public DateTime Issued { get; }
+
+    public TimestampRefreshToken(Guid refreshToken, DateTime issued)
+    {
+        RefreshToken = refreshToken;
+        Issued = issued;
+    }
 }

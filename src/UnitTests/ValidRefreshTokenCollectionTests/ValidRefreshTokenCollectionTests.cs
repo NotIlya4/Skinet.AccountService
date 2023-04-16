@@ -16,11 +16,11 @@ public class ValidRefreshTokenCollectionTests
     {
         List<TimestampRefreshToken> refreshTokens = new()
         {
-            new TimestampRefreshToken() { RefreshToken = RefreshToken3, Issued = DateTime.UtcNow.AddMinutes(-30) },
-            new TimestampRefreshToken() { RefreshToken = RefreshToken4, Issued = DateTime.UtcNow.AddMinutes(-23) },
-            new TimestampRefreshToken() { RefreshToken = RefreshToken1, Issued = DateTime.UtcNow.AddMinutes(-17) },
-            new TimestampRefreshToken() { RefreshToken = RefreshToken2, Issued = DateTime.UtcNow.AddMinutes(-3) },
-            new TimestampRefreshToken() { RefreshToken = RefreshToken5, Issued = DateTime.UtcNow.AddMinutes(0) },
+            new TimestampRefreshToken(refreshToken: RefreshToken3, issued: DateTime.UtcNow.AddMinutes(-30)),
+            new TimestampRefreshToken(refreshToken: RefreshToken4, issued: DateTime.UtcNow.AddMinutes(-23)),
+            new TimestampRefreshToken(refreshToken: RefreshToken1, issued: DateTime.UtcNow.AddMinutes(-17)),
+            new TimestampRefreshToken(refreshToken: RefreshToken2, issued: DateTime.UtcNow.AddMinutes(-3)),
+            new TimestampRefreshToken(refreshToken: RefreshToken5, issued: DateTime.UtcNow.AddMinutes(0)),
         };
         List<Guid> expect = new()
         {
@@ -38,10 +38,10 @@ public class ValidRefreshTokenCollectionTests
     {
         List<TimestampRefreshToken> refreshTokens = new()
         {
-            new TimestampRefreshToken() { RefreshToken = RefreshToken3, Issued = DateTime.UtcNow.AddMinutes(-5) },
-            new TimestampRefreshToken() { RefreshToken = RefreshToken4, Issued = DateTime.UtcNow.AddMinutes(-3) },
-            new TimestampRefreshToken() { RefreshToken = RefreshToken1, Issued = DateTime.UtcNow.AddMinutes(-3) },
-            new TimestampRefreshToken() { RefreshToken = RefreshToken2, Issued = DateTime.UtcNow.AddMinutes(-2) }
+            new TimestampRefreshToken(refreshToken: RefreshToken3, issued: DateTime.UtcNow.AddMinutes(-5)),
+            new TimestampRefreshToken(refreshToken: RefreshToken4, issued: DateTime.UtcNow.AddMinutes(-3)),
+            new TimestampRefreshToken(refreshToken: RefreshToken1, issued: DateTime.UtcNow.AddMinutes(-3)),
+            new TimestampRefreshToken(refreshToken: RefreshToken2, issued: DateTime.UtcNow.AddMinutes(-2)),
         };
         List<Guid> expect = new()
         {
@@ -61,11 +61,11 @@ public class ValidRefreshTokenCollectionTests
     {
         List<TimestampRefreshToken> refreshTokens = new()
         {
-            new TimestampRefreshToken() { RefreshToken = RefreshToken3, Issued = DateTime.UtcNow.AddMinutes(-50) },
-            new TimestampRefreshToken() { RefreshToken = RefreshToken4, Issued = DateTime.UtcNow.AddMinutes(-45) },
-            new TimestampRefreshToken() { RefreshToken = RefreshToken1, Issued = DateTime.UtcNow.AddMinutes(-41) },
-            new TimestampRefreshToken() { RefreshToken = RefreshToken2, Issued = DateTime.UtcNow.AddMinutes(-37) },
-            new TimestampRefreshToken() { RefreshToken = RefreshToken5, Issued = DateTime.UtcNow.AddMinutes(-33) },
+            new TimestampRefreshToken(refreshToken: RefreshToken3, issued: DateTime.UtcNow.AddMinutes(-50)),
+            new TimestampRefreshToken(refreshToken: RefreshToken4, issued: DateTime.UtcNow.AddMinutes(-45)),
+            new TimestampRefreshToken(refreshToken: RefreshToken1, issued: DateTime.UtcNow.AddMinutes(-41)),
+            new TimestampRefreshToken(refreshToken: RefreshToken2, issued: DateTime.UtcNow.AddMinutes(-37)),
+            new TimestampRefreshToken(refreshToken: RefreshToken5, issued: DateTime.UtcNow.AddMinutes(-33)),
         };
         List<Guid> expect = new();
 

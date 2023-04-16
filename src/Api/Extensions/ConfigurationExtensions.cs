@@ -19,13 +19,11 @@ public static class ConfigurationExtensions
         string issuer = config.GetRequiredValue("Issuer");
         string audience = config.GetRequiredValue("Audience");
 
-        return new JwtTokenManagerOptions()
-        {
-            Secret = secret,
-            Expire = expire,
-            Issuer = issuer,
-            Audience = audience
-        };
+        return new JwtTokenManagerOptions(
+            secret: secret,
+            expire: expire,
+            issuer: issuer,
+            audience: audience);
     }
 
     public static RefreshTokenRepositoryOptions GetRefreshTokenRepositoryOptions(this IConfiguration config, string? key = null)
@@ -37,9 +35,6 @@ public static class ConfigurationExtensions
         
         TimeSpan expire = TimeSpan.FromHours(config.GetRequiredValue<float>("ExpireHours"));
 
-        return new RefreshTokenRepositoryOptions()
-        {
-            Expire = expire
-        };
+        return new RefreshTokenRepositoryOptions(expire);
     }
 }

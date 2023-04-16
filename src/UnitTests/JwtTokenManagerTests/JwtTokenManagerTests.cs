@@ -15,17 +15,15 @@ public class JwtTokenManagerTests
     
     public JwtTokenManagerTests()
     {
-        Options = new JwtTokenManagerOptions()
-        {
-            Issuer = "AccountService",
-            Audience = "Api",
-            Secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1tsJusT@S@mpleP@ssword!")),
-            Expire = TimeSpan.FromMinutes(15),
-        };
+        Options = new JwtTokenManagerOptions(
+            issuer: "AccountService",
+            audience: "Api",
+            secret: new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1tsJusT@S@mpleP@ssword!")),
+            expire: TimeSpan.FromMinutes(15));
+        
         Manager = new JwtTokenManager(Options);
         RawToken = Manager.CreateJwtToken(UserId);
         Token = new JwtSecurityToken(RawToken);
-        // IdentityModelEventSource.ShowPII = true;
     }
 
     [Fact]

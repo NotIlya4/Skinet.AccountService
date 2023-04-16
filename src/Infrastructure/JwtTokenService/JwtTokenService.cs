@@ -22,11 +22,9 @@ public class JwtTokenService : IJwtTokenService
 
         string newJwtToken = _jwtTokenManager.CreateJwtToken(userId);
 
-        return new JwtTokenPair()
-        {
-            JwtToken = newJwtToken,
-            RefreshToken = newRefreshToken
-        };
+        return new JwtTokenPair(
+            jwtToken: newJwtToken,
+            refreshToken: newRefreshToken);
     }
 
     public async Task<JwtTokenPair> UpdatePair(Guid userId, Guid refreshToken)

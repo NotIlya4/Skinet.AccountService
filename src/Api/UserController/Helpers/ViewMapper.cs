@@ -15,15 +15,6 @@ public class ViewMapper
         };
     }
 
-    public JwtTokenPair MapJwtTokenPair(JwtTokenPairView jwtTokenPairView)
-    {
-        return new JwtTokenPair()
-        {
-            JwtToken = jwtTokenPairView.JwtToken,
-            RefreshToken = new Guid(jwtTokenPairView.RefreshToken)
-        };
-    }
-
     public UserView MapUser(User user)
     {
         if (user.Address is null)

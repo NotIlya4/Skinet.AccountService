@@ -14,11 +14,9 @@ public class RefreshTokenSerializer
 
     private TimestampRefreshToken DeserializeTimestampRefreshToken(JToken rawRefreshToken)
     {
-        return new TimestampRefreshToken()
-        {
-            Issued = rawRefreshToken[nameof(TimestampRefreshToken.Issued)]!.ToObject<DateTime>(),
-            RefreshToken = new Guid(rawRefreshToken[nameof(TimestampRefreshToken.RefreshToken)]!.Value<string>()!)
-        };
+        return new TimestampRefreshToken(
+            issued: rawRefreshToken[nameof(TimestampRefreshToken.Issued)]!.ToObject<DateTime>(),
+            refreshToken: new Guid(rawRefreshToken[nameof(TimestampRefreshToken.RefreshToken)]!.Value<string>()!));
     }
 
     public string SerializeCollection(List<TimestampRefreshToken> refreshTokens)
