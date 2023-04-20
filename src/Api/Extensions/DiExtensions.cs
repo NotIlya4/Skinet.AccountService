@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Api.ExeptionCatching;
-using Api.UserController;
+using Api.ExceptionMappers;
+using Api.UserController.Helpers;
 using ExceptionCatcherMiddleware.Extensions;
 using Infrastructure.EntityFramework;
 using Infrastructure.EntityFramework.Models;
@@ -10,6 +10,7 @@ using Infrastructure.RefreshTokenSystem;
 using Infrastructure.RefreshTokenSystem.Repository;
 using Infrastructure.UserService;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 
 namespace Api.Extensions;
@@ -21,13 +22,13 @@ public static class DiExtensions
         services.AddExceptionCatcherMiddlewareServices(builder =>
         {
             builder.RegisterExceptionMapper<ValidationException, ValidationExceptionMapper>();
+            builder.RegisterExceptionMapper<SecurityTokenExpiredException, SecurityTokenExpiredExceptionMapper>();
         });
     }
 
     public static void AddUserService(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<EnumParser>();
     }
 
     public static void AddMappers(this IServiceCollection services)

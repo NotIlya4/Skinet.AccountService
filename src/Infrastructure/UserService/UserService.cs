@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Domain.Primitives;
 using Infrastructure.EntityFramework.Models;
+using Infrastructure.JwtTokenManager;
 using Infrastructure.JwtTokenService;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,74 +12,13 @@ public class UserService : IUserService
 {
     private readonly IJwtTokenService _jwtTokenService;
     private readonly UserManager<UserData> _userManager;
+    private readonly IJwtTokenManager _jwtTokenManager;
 
-    public UserService(IJwtTokenService jwtTokenService, UserManager<UserData> userManager)
+    public UserService(IJwtTokenService jwtTokenService, UserManager<UserData> userManager, IJwtTokenManager jwtTokenManager)
     {
         _jwtTokenService = jwtTokenService;
         _userManager = userManager;
-    }
-
-    public async Task<User> GetUser(UserStrictFilterProperty filterProperty, string value)
-    {
-        if (filterProperty == UserStrictFilterProperty.Id)
-        {
-            UserData? userData = await _userManager.FindByIdAsync(value);
-            if (userData is null)
-            {
-                throw new InvalidOperationException("User not found");
-            }
-
-            return ExtractUser(userData);
-        }
-
-        if (filterProperty == UserStrictFilterProperty.Email)
-        {
-            UserData? userData = await _userManager.FindByEmailAsync(value);
-            if (userData is null)
-            {
-                throw new InvalidOperationException("User not found");
-            }
-
-            return ExtractUser(userData);
-        }
-
-        throw new InvalidOperationException("Id and Email supported only");
-    }
-    
-    private string ThrowIfNull([NotNull] string? value, string fieldName)
-    {
-        if (value is null)
-        {
-            throw new InvalidOperationException($"{fieldName} doesn't exists");
-        }
-
-        return value;
-    }
-
-    private User ExtractUser(UserData userData)
-    {
-        Address? address = null;
-        try
-        {
-            address = ExtractAddress(userData);
-        }
-        catch (InvalidOperationException)
-        {
-            
-        }
-        return new(
-            id: new Guid(userData.Id),
-            email: ThrowIfNull(userData.Email, nameof(userData.Email)),
-            address: address);
-    }
-
-    private Address ExtractAddress(UserData userData)
-    {
-        return new Address(
-            country: ThrowIfNull(userData.Country, nameof(userData.Country)),
-            city: ThrowIfNull(userData.City, nameof(userData.City)),
-            street: ThrowIfNull(userData.Street, nameof(userData.Street)),
-            zipcode: ThrowIfNull(userData.Zipcode, nameof(userData.Zipcode)));
+        _jwtTokenManager = jwtTokenManager;
     }
 
     public async Task<JwtTokenPair> Register(string email, string password)
@@ -117,9 +57,82 @@ public class UserService : IUserService
         return await _jwtTokenService.AddNewRefreshToken(new Guid(user.Id));
     }
 
-    public async Task Logout(Guid userId, Guid refreshToken)
+    public async Task<JwtTokenPair> UpdateJwtPair(JwtTokenPair jwtTokenPair)
     {
-        await _jwtTokenService.ExpireRefreshToken(userId, refreshToken);
+        return await _jwtTokenService.UpdatePair(_jwtTokenManager.ExtractUserId(jwtTokenPair.JwtToken), jwtTokenPair.RefreshToken);
+    }
+
+    public async Task<User> GetUser(string jwtToken)
+    {
+        return await GetUser(UserStrictFilterProperty.Jwt, jwtToken);
+    }
+
+    public async Task<User> GetUser(UserStrictFilterProperty filterProperty, string value)
+    {
+        UserData? userData = null;
+        if (filterProperty == UserStrictFilterProperty.Id)
+        {
+            userData = await _userManager.FindByIdAsync(value);
+        }
+
+        if (filterProperty == UserStrictFilterProperty.Email)
+        {
+            userData = await _userManager.FindByEmailAsync(value);
+        }
+
+        if (filterProperty == UserStrictFilterProperty.Jwt)
+        {
+            Guid userId = _jwtTokenManager.ValidateAndExtractUserId(value);
+            userData = await _userManager.FindByIdAsync(userId.ToString());
+        }
+        
+        if (userData is null)
+        {
+            throw new InvalidOperationException("User not found");
+        }
+
+        return ExtractUser(userData);
+    }
+
+    private string ThrowIfNull([NotNull] string? value, string fieldName)
+    {
+        if (value is null)
+        {
+            throw new InvalidOperationException($"{fieldName} doesn't exists");
+        }
+
+        return value;
+    }
+
+    private User ExtractUser(UserData userData)
+    {
+        Address? address = null;
+        try
+        {
+            address = ExtractAddress(userData);
+        }
+        catch (InvalidOperationException)
+        {
+            
+        }
+        return new(
+            id: new Guid(userData.Id),
+            email: ThrowIfNull(userData.Email, nameof(userData.Email)),
+            address: address);
+    }
+
+    private Address ExtractAddress(UserData userData)
+    {
+        return new Address(
+            country: ThrowIfNull(userData.Country, nameof(userData.Country)),
+            city: ThrowIfNull(userData.City, nameof(userData.City)),
+            street: ThrowIfNull(userData.Street, nameof(userData.Street)),
+            zipcode: ThrowIfNull(userData.Zipcode, nameof(userData.Zipcode)));
+    }
+
+    public async Task Logout(JwtTokenPair jwtTokenPair)
+    {
+        await _jwtTokenService.ExpireRefreshToken(_jwtTokenManager.ExtractUserId(jwtTokenPair.JwtToken), jwtTokenPair.RefreshToken);
     }
 
     public async Task LogOutInAllEntries(Guid userId)
@@ -127,13 +140,17 @@ public class UserService : IUserService
         await _jwtTokenService.ExpireAllRefreshTokens(userId);
     }
 
-    public async Task<JwtTokenPair> UpdateJwtPair(Guid userId, Guid refreshToken)
+    public async Task<bool> IsEmailBusy(string email)
     {
-        return await _jwtTokenService.UpdatePair(userId, refreshToken);
-    }
+        try
+        {
+            await GetUser(UserStrictFilterProperty.Email, email);
+        }
+        catch(InvalidOperationException)
+        {
+            return false;
+        }
 
-    public void ValidateJwtToken(string jwtToken)
-    {
-        _jwtTokenService.ValidateJwtToken(jwtToken);
+        return true;
     }
 }

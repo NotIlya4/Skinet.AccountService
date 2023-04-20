@@ -3,5 +3,6 @@
 public enum UserStrictFilterProperty
 {
     Id,
-    Email
+    Email,
+    Jwt
 }

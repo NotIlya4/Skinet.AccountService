@@ -2,10 +2,14 @@
 
 public class UserView
 {
-    public required string Id { get; init; }
-    public required string Email { get; init; }
-    public string? Country { get; init; }
-    public string? City { get; init; }
-    public string? Street { get; init; }
-    public string? Zipcode { get; init; }
+    public string Id { get; }
+    public string Email { get; }
+    public AddressView? Address { get; }
+
+    public UserView(string id, string email, AddressView? address = null)
+    {
+        Id = id;
+        Email = email;
+        Address = address;
+    }
 }

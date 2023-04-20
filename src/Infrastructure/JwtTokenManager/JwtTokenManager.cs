@@ -45,7 +45,18 @@ public class JwtTokenManager : IJwtTokenManager
         return _tokenHandler.CreateEncodedJwt(tokenDescriptor);
     }
 
-    public void Validate(string token)
+    public Guid ValidateAndExtractUserId(string jwtToken)
+    {
+        Validate(jwtToken);
+        return ExtractUserId(jwtToken);
+    }
+
+    public Guid ExtractUserId(string jwtToken)
+    {
+        return new Guid(_tokenHandler.ReadJwtToken(jwtToken).Subject);
+    }
+
+    private void Validate(string token)
     {
         _tokenHandler.ValidateToken(token, _validationParameters, out _);
     }

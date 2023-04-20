@@ -2,6 +2,12 @@
 
 public class RegisterCredentialsView
 {
-    public required string Email { get; init; }
-    public required string Password { get; init; }
+    public string Email { get; }
+    public string Password { get; }
+
+    public RegisterCredentialsView(string email, string password)
+    {
+        Email = email;
+        Password = password;
+    }
 }

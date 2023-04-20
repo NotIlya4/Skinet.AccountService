@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ExceptionCatcherMiddleware.Mappers.CreatingCustomMappers;
 
-namespace Api.ExeptionCatching;
+namespace Api.ExceptionMappers;
 
 public class ValidationExceptionMapper : IExceptionMapper<ValidationException>
 {

@@ -6,5 +6,4 @@ public interface IJwtTokenService
     public Task<JwtTokenPair> UpdatePair(Guid userId, Guid refreshToken);
     public Task ExpireRefreshToken(Guid userId, Guid refreshToken);
     public Task ExpireAllRefreshTokens(Guid userId);
-    public void ValidateJwtToken(string jwtToken);
 }

@@ -2,5 +2,10 @@
 
 public class EmailBusyResponseView
 {
-    public required bool IsEmailBusy { get; init; }
+    public bool IsEmailBusy { get; }
+
+    public EmailBusyResponseView(bool isEmailBusy)
+    {
+        IsEmailBusy = isEmailBusy;
+    }
 }

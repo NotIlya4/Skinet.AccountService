@@ -61,7 +61,7 @@ public class JwtTokenManagerTests
     {
         var expiredToken = AlterExpires(Token, DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow.AddMinutes(-15));
 
-        Assert.Throws<SecurityTokenExpiredException>(() => { Manager.Validate(Serialize(expiredToken)); });
+        Assert.Throws<SecurityTokenExpiredException>(() => { Manager.ValidateAndExtractUserId(Serialize(expiredToken)); });
     }
 
     private JwtSecurityToken AlterExpires(JwtSecurityToken token, DateTime notBefore, DateTime expires)

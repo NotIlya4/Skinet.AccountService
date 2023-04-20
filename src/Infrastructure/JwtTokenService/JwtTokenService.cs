@@ -29,7 +29,7 @@ public class JwtTokenService : IJwtTokenService
 
     public async Task<JwtTokenPair> UpdatePair(Guid userId, Guid refreshToken)
     {
-        await _refreshTokenRepository.StrictDelete(userId, refreshToken);
+        await _refreshTokenRepository.StrictDelete(userId: userId, token: refreshToken);
         return await AddNewRefreshToken(userId);
     }
 
@@ -41,10 +41,5 @@ public class JwtTokenService : IJwtTokenService
     public async Task ExpireAllRefreshTokens(Guid userId)
     {
         await _refreshTokenRepository.DeleteAllForUser(userId);
-    }
-
-    public void ValidateJwtToken(string jwtToken)
-    {
-        _jwtTokenManager.Validate(jwtToken);
     }
 }

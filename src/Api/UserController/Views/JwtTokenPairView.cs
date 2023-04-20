@@ -2,6 +2,12 @@
 
 public class JwtTokenPairView
 {
-    public required string JwtToken { get; init; }
-    public required string RefreshToken { get; init; }
+    public string JwtToken { get; }
+    public string RefreshToken { get; }
+
+    public JwtTokenPairView(string jwtToken, string refreshToken)
+    {
+        JwtToken = jwtToken;
+        RefreshToken = refreshToken;
+    }
 }

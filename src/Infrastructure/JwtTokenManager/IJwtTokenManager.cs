@@ -3,5 +3,6 @@
 public interface IJwtTokenManager
 {
     public string CreateJwtToken(Guid userId);
-    public void Validate(string token);
+    public Guid ValidateAndExtractUserId(string jwtToken);
+    public Guid ExtractUserId(string jwtToken);
 }
