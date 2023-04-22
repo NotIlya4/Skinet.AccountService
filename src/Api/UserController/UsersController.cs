@@ -93,7 +93,7 @@ public class UsersController : ControllerBase
     [Route("jwt/{jwt}")]
     public async Task<ActionResult<UserView>> GetUserByJwt(string jwt)
     {
-        User address = await _userService.GetUser(jwtToken: jwt);
+        User address = await _userService.GetUser(UserStrictFilterProperty.Jwt, jwt);
         UserView addressView = _mapper.MapUser(address);
         return Ok(addressView);
     }

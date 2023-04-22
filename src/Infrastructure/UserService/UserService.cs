@@ -23,7 +23,7 @@ public class UserService : IUserService
 
     public async Task<JwtTokenPair> Register(string email, string password)
     {
-        UserData userData = new(email);
+        var userData = new UserData(email);
         userData.Email = email;
         
         IdentityResult? result = await _userManager.CreateAsync(userData, password);
@@ -60,11 +60,6 @@ public class UserService : IUserService
     public async Task<JwtTokenPair> UpdateJwtPair(JwtTokenPair jwtTokenPair)
     {
         return await _jwtTokenService.UpdatePair(_jwtTokenManager.ExtractUserId(jwtTokenPair.JwtToken), jwtTokenPair.RefreshToken);
-    }
-
-    public async Task<User> GetUser(string jwtToken)
-    {
-        return await GetUser(UserStrictFilterProperty.Jwt, jwtToken);
     }
 
     public async Task<User> GetUser(UserStrictFilterProperty filterProperty, string value)
@@ -115,7 +110,7 @@ public class UserService : IUserService
         {
             
         }
-        return new(
+        return new User(
             id: new Guid(userData.Id),
             email: ThrowIfNull(userData.Email, nameof(userData.Email)),
             address: address);

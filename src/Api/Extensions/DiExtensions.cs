@@ -21,8 +21,8 @@ public static class DiExtensions
     {
         services.AddExceptionCatcherMiddlewareServices(builder =>
         {
-            builder.RegisterExceptionMapper<ValidationException, ValidationExceptionMapper>();
             builder.RegisterExceptionMapper<SecurityTokenExpiredException, SecurityTokenExpiredExceptionMapper>();
+            builder.RegisterExceptionMapper<ValidationException, ValidationExceptionMapper>();
         });
     }
 
