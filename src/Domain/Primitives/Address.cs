@@ -2,12 +2,18 @@
 
 public record Address
 {
-    public string Country { get; }
-    public string City { get; }
-    public string Street { get; }
-    public string Zipcode { get; }
+    public Name Country { get; }
+    public Name City { get; }
+    public Name Street { get; }
+    public Name Zipcode { get; }
 
-    public Address(string country, string city, string street, string zipcode)
+    public Address(string country, string city, string street, string zipcode) : this(
+        country: new Name(country), 
+        city: new Name(city), 
+        street: new Name(street), 
+        zipcode: new Name(zipcode)) { }
+
+    public Address(Name country, Name city, Name street, Name zipcode)
     {
         Country = country;
         City = city;

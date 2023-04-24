@@ -5,12 +5,14 @@ namespace Domain.Entities;
 public record User
 {
     public Guid Id { get; }
-    public string Email { get; }
+    public Name Username { get; }
+    public Name Email { get; }
     public Address? Address { get; }
 
-    public User(Guid id, string email, Address? address)
+    public User(Guid id, Name username, Name email, Address? address)
     {
         Id = id;
+        Username = username;
         Email = email;
         Address = address;
     }

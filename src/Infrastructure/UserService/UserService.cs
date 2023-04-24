@@ -4,6 +4,7 @@ using Domain.Primitives;
 using Infrastructure.EntityFramework.Models;
 using Infrastructure.JwtTokenManager;
 using Infrastructure.JwtTokenService;
+using Infrastructure.UserService.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.UserService;
@@ -21,12 +22,12 @@ public class UserService : IUserService
         _jwtTokenManager = jwtTokenManager;
     }
 
-    public async Task<JwtTokenPair> Register(string email, string password)
+    public async Task<JwtTokenPair> Register(RegisterCredentials registerCredentials)
     {
-        var userData = new UserData(email);
-        userData.Email = email;
+        var userData = new UserData(registerCredentials.Username.Value);
+        userData.Email = registerCredentials.Email.Value;
         
-        IdentityResult? result = await _userManager.CreateAsync(userData, password);
+        IdentityResult? result = await _userManager.CreateAsync(userData, registerCredentials.Password.Value);
         if (result is null)
         {
             throw new Exception("Result is null");
@@ -40,16 +41,16 @@ public class UserService : IUserService
         return await _jwtTokenService.AddNewRefreshToken(new Guid(userData.Id));
     }
 
-    public async Task<JwtTokenPair> Login(string email, string password)
+    public async Task<JwtTokenPair> Login(LoginCredentials loginCredentials)
     {
-        UserData? user = await _userManager.FindByEmailAsync(email);
+        UserData? user = await _userManager.FindByEmailAsync(loginCredentials.Email.Value);
         
         if (user is null)
         {
             throw new InvalidOperationException("User not found");
         }
 
-        if (!(await _userManager.CheckPasswordAsync(user, password)))
+        if (!(await _userManager.CheckPasswordAsync(user, loginCredentials.Password.Value)))
         {
             throw new InvalidOperationException("Wrong password");
         }
@@ -112,7 +113,8 @@ public class UserService : IUserService
         }
         return new User(
             id: new Guid(userData.Id),
-            email: ThrowIfNull(userData.Email, nameof(userData.Email)),
+            username: new Name(ThrowIfNull(userData.UserName, nameof(userData.UserName))),
+            email: new Name(ThrowIfNull(userData.Email, nameof(userData.Email))),
             address: address);
     }
 

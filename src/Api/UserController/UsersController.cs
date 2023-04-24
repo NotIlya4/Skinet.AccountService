@@ -1,6 +1,7 @@
 ﻿using Api.UserController.Helpers;
 using Api.UserController.Views;
 using Domain.Entities;
+using Infrastructure;
 using Infrastructure.JwtTokenService;
 using Infrastructure.UserService;
 using Microsoft.AspNetCore.Mvc;
@@ -24,16 +25,16 @@ public class UsersController : ControllerBase
     [Route("register")]
     public async Task<ActionResult<JwtTokenPairView>> Register(RegisterCredentialsView registerCredentialsView)
     {
-        JwtTokenPair jwtTokenPair = await _userService.Register(registerCredentialsView.Email, registerCredentialsView.Password);
+        JwtTokenPair jwtTokenPair = await _userService.Register(_mapper.MapRegisterCredentials(registerCredentialsView));
         JwtTokenPairView responseJwtTokenPairView = _mapper.MapJwtTokenPair(jwtTokenPair);
         return Ok(responseJwtTokenPairView);
     }
 
     [HttpPost]
     [Route("login")]
-    public async Task<ActionResult<JwtTokenPairView>> Login(RegisterCredentialsView registerCredentialsView)
+    public async Task<ActionResult<JwtTokenPairView>> Login(LoginCredentialsView loginCredentialsView)
     {
-        JwtTokenPair jwtTokenPair = await _userService.Login(registerCredentialsView.Email, registerCredentialsView.Password);
+        JwtTokenPair jwtTokenPair = await _userService.Login(_mapper.MapLoginCredentials(loginCredentialsView));
         JwtTokenPairView responseJwtTokenPairView = _mapper.MapJwtTokenPair(jwtTokenPair);
         return Ok(responseJwtTokenPairView);
     }

@@ -1,7 +1,9 @@
 ﻿using Api.UserController.Views;
 using Domain.Entities;
 using Domain.Primitives;
+using Infrastructure;
 using Infrastructure.JwtTokenService;
+using Infrastructure.UserService.Models;
 
 namespace Api.UserController.Helpers;
 
@@ -27,21 +29,38 @@ public class ViewMapper
         {
             return new UserView(
                 id: user.Id.ToString(),
-                email: user.Email);
+                username: user.Username.Value,
+                email: user.Email.Value);
         }
         
         return new UserView(
             id: user.Id.ToString(),
-            email: user.Email,
+            username: user.Username.Value,
+            email: user.Email.Value,
             address: MapAddress(user.Address));
     }
 
     public AddressView MapAddress(Address address)
     {
         return new AddressView(
-            country: address.Country,
-            city: address.City,
-            street: address.Street,
-            zipcode: address.Zipcode);
+            country: address.Country.Value,
+            city: address.City.Value,
+            street: address.Street.Value,
+            zipcode: address.Zipcode.Value);
+    }
+
+    public RegisterCredentials MapRegisterCredentials(RegisterCredentialsView view)
+    {
+        return new RegisterCredentials(
+            username: view.Username,
+            email: view.Email,
+            password: view.Password);
+    }
+
+    public LoginCredentials MapLoginCredentials(LoginCredentialsView view)
+    {
+        return new LoginCredentials(
+            email: view.Email,
+            password: view.Password);
     }
 }
