@@ -1,14 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Api.ExceptionMappers;
 using Api.UserController.Helpers;
+using Domain.Exceptions;
 using ExceptionCatcherMiddleware.Extensions;
 using Infrastructure.EntityFramework;
-using Infrastructure.EntityFramework.Models;
-using Infrastructure.JwtTokenManager;
-using Infrastructure.JwtTokenService;
+using Infrastructure.EntityFramework.Helpers;
+using Infrastructure.JwtTokenSystem.Manager;
+using Infrastructure.JwtTokenSystem.Service;
 using Infrastructure.RefreshTokenSystem;
 using Infrastructure.RefreshTokenSystem.Repository;
-using Infrastructure.UserService;
+using Infrastructure.UserSystem.Repository;
+using Infrastructure.UserSystem.Service;
+using Infrastructure.UserSystem.Service.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
@@ -23,17 +26,30 @@ public static class DiExtensions
         {
             builder.RegisterExceptionMapper<SecurityTokenExpiredException, SecurityTokenExpiredExceptionMapper>();
             builder.RegisterExceptionMapper<ValidationException, ValidationExceptionMapper>();
+            builder.RegisterExceptionMapper<DomainValidationException, DomainValidationExceptionMapper>();
+        });
+    }
+
+    public static void AddConfiguredDbContext(this IServiceCollection services, string connectionString)
+    {
+        services.AddDbContext<AppDbContext>(builder =>
+        {
+            builder.UseSqlServer(connectionString, b => b.MigrationsAssembly("Infrastructure"));
+            builder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
     }
 
     public static void AddUserService(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IUserRepository, UserRepository>();
     }
 
     public static void AddMappers(this IServiceCollection services)
     {
         services.AddScoped<ViewMapper>();
+        services.AddScoped<DataMapper>();
     }
 
     public static void AddJwtTokenServices(this IServiceCollection services, JwtTokenManagerOptions jwtTokenManagerOptions)
@@ -57,19 +73,5 @@ public static class DiExtensions
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddSingleton(options);
         services.AddScoped<RefreshTokenSerializer>();
-    }
-
-    public static void AddDbContextForIdentity(this IServiceCollection services, string connectionString)
-    {
-        services.AddDbContext<AppDbContext>(builder =>
-        {
-            builder.UseSqlServer(connectionString, b => b.MigrationsAssembly("Infrastructure"));
-        });
-    }
-    
-    public static void AddConfiguredIdentity(this IServiceCollection services)
-    {
-        services.AddIdentityCore<UserData>()
-            .AddEntityFrameworkStores<AppDbContext>();
     }
 }

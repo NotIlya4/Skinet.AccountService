@@ -1,3 +1,5 @@
+using BC = BCrypt.Net.BCrypt;
+
 namespace UnitTests;
 
 public class TempTests
@@ -5,7 +7,11 @@ public class TempTests
     // [Fact]
     // public void Test()
     // {
-    //     ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost");
-    //     IDatabase db = redis.GetDatabase();
+    //     string password = "Mama";
+    //     string hash = BC.HashPassword(password);
+    //     string hash2 = BC.HashPassword(password);
+    //     
+    //     Assert.True(BC.Verify(password, hash));
+    //     Assert.True(BC.Verify(password, hash2));
     // }
 }

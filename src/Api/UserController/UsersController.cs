@@ -1,9 +1,9 @@
 ﻿using Api.UserController.Helpers;
 using Api.UserController.Views;
 using Domain.Entities;
-using Infrastructure;
-using Infrastructure.JwtTokenService;
-using Infrastructure.UserService;
+using Infrastructure.JwtTokenSystem.Service;
+using Infrastructure.UserSystem.Service;
+using Infrastructure.UserSystem.Service.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.UserController;
@@ -65,37 +65,45 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
+    [Route("id/{id}")]
+    public async Task<ActionResult<UserView>> GetUserById(string id)
+    {
+        User address = await _userService.GetUser(UserServiceStrictFilter.Id, id);
+        UserView addressView = _mapper.MapUser(address);
+        return Ok(addressView);
+    }
+
+    [HttpGet]
+    [Route("name/{name}")]
+    public async Task<ActionResult<UserView>> GetUserByName(string name)
+    {
+        User address = await _userService.GetUser(UserServiceStrictFilter.Id, name);
+        UserView addressView = _mapper.MapUser(address);
+        return Ok(addressView);
+    }
+
+    [HttpGet]
+    [Route("jwt/{jwt}")]
+    public async Task<ActionResult<UserView>> GetUserByJwt(string jwt)
+    {
+        User address = await _userService.GetUser(UserServiceStrictFilter.Jwt, jwt);
+        UserView addressView = _mapper.MapUser(address);
+        return Ok(addressView);
+    }
+
+    [HttpGet]
     [Route("email/{email}/busy")]
     public async Task<ActionResult<bool>> IsEmailBusy(string email)
     {
         bool isBusy = await _userService.IsEmailBusy(email);
         return Ok(isBusy);
     }
-
-    [HttpGet]
-    [Route("id/{id}")]
-    public async Task<ActionResult<UserView>> GetUserById(string id)
-    {
-        User address = await _userService.GetUser(UserStrictFilterProperty.Id, id);
-        UserView addressView = _mapper.MapUser(address);
-        return Ok(addressView);
-    }
     
     [HttpGet]
-    [Route("name/{name}")]
-    public async Task<ActionResult<UserView>> GetUserByName(string name)
+    [Route("username/{username}/busy")]
+    public async Task<ActionResult<bool>> IsUsernameBusy(string username)
     {
-        User address = await _userService.GetUser(UserStrictFilterProperty.Id, name);
-        UserView addressView = _mapper.MapUser(address);
-        return Ok(addressView);
-    }
-    
-    [HttpGet]
-    [Route("jwt/{jwt}")]
-    public async Task<ActionResult<UserView>> GetUserByJwt(string jwt)
-    {
-        User address = await _userService.GetUser(UserStrictFilterProperty.Jwt, jwt);
-        UserView addressView = _mapper.MapUser(address);
-        return Ok(addressView);
+        bool isBusy = await _userService.IsUsernameBusy(username);
+        return Ok(isBusy);
     }
 }

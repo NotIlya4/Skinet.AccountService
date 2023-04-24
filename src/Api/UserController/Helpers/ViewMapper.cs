@@ -1,9 +1,8 @@
 ﻿using Api.UserController.Views;
 using Domain.Entities;
-using Domain.Primitives;
-using Infrastructure;
-using Infrastructure.JwtTokenService;
-using Infrastructure.UserService.Models;
+using Domain.Primitives.Address;
+using Infrastructure.JwtTokenSystem.Service;
+using Infrastructure.UserSystem.Service.Models;
 
 namespace Api.UserController.Helpers;
 

@@ -6,4 +6,9 @@ public class DomainValidationException : Exception
     {
         
     }
+
+    public static DomainValidationException CannotBeEmpty(string entityName)
+    {
+        return new DomainValidationException($"{entityName} can not be empty");
+    }
 }

@@ -11,7 +11,7 @@ public static class WebApplicationExtensions
         if (parametersProvider.AutoMigrate())
         {
             var scope = app.Services.CreateScope();
-            AppDbContext dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             dbContext.Database.Migrate();
             scope.Dispose();
         }

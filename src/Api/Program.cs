@@ -6,13 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 ParametersProvider parametersProvider = new(builder.Configuration);
 
-services.AddConfiguredIdentity();
-services.AddDbContextForIdentity(parametersProvider.GetSqlServer());
-
 services.AddRefreshTokenRepository(parametersProvider.GetRefreshTokenRepositoryOptions());
 services.AddJwtTokenServices(parametersProvider.GetJwtTokenManagerOptions());
 services.AddRedisForRefreshTokenRepository(parametersProvider.GetRedis());
 
+services.AddConfiguredDbContext(parametersProvider.GetSqlServer());
 services.AddMappers();
 services.AddUserService();
 
