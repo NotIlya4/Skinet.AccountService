@@ -2,14 +2,14 @@
 
 public class UserData
 {
-    public string Id { get; set; }
-    public string Username { get; set; }
-    public string Email { get; set; }
-    public string PasswordHash { get; set; }
-    public string? Country { get; set; }
-    public string? City { get; set; }
-    public string? Street { get; set; }
-    public string? Zipcode { get; set; }
+    public string Id { get; private set; }
+    public string Username { get; private set; }
+    public string Email { get; private set; }
+    public string PasswordHash { get; private set; }
+    public string? Country { get; private set; }
+    public string? City { get; private set; }
+    public string? Street { get; private set; }
+    public string? Zipcode { get; private set; }
 
     public UserData(string id, string username, string email, string passwordHash, string? country, string? city, string? street, string? zipcode)
     {
@@ -21,5 +21,13 @@ public class UserData
         City = city;
         Street = street;
         Zipcode = zipcode;
+    }
+
+    private UserData()
+    {
+        Id = null!;
+        Username = null!;
+        Email = null!;
+        PasswordHash = null!;
     }
 }
