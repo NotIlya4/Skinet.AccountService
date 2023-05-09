@@ -8,7 +8,7 @@ public static class WebApplicationExtensions
 {
     public static void ConfigureDb(this WebApplication app, ParametersProvider parametersProvider)
     {
-        if (parametersProvider.AutoMigrate())
+        if (parametersProvider.AutoMigrate)
         {
             var scope = app.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();

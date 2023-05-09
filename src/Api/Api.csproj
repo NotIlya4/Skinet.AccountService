@@ -15,12 +15,23 @@
     </PackageReference>
     
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
+    
+    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+    
+    <PackageReference Include="Serilog.Enrichers.CorrelationId" Version="3.0.1" />
+    
+    <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.104" />
+    <PackageReference Include="SwaggerEnrichers" Version="1.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="IntegrationTests" />
   </ItemGroup>
 
 </Project>
