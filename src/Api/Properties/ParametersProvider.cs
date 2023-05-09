@@ -1,6 +1,6 @@
 ﻿using Api.Extensions;
 using Infrastructure.JwtTokenSystem.Manager;
-using Infrastructure.RefreshTokenSystem.Repository;
+using Infrastructure.RefreshTokenRepository.Models;
 
 namespace Api.Properties;
 

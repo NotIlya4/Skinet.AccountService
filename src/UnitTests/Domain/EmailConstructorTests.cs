@@ -1,7 +1,7 @@
 ﻿using Domain.Exceptions;
 using Domain.Primitives;
 
-namespace UnitTests;
+namespace UnitTests.Domain;
 
 public class EmailConstructorTests
 {

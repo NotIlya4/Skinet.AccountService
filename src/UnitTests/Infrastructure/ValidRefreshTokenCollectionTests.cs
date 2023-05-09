@@ -1,7 +1,8 @@
-﻿using Infrastructure.RefreshTokenSystem;
-using Infrastructure.RefreshTokenSystem.Repository;
+﻿using Infrastructure.RefreshTokenRepository.Exceptions;
+using Infrastructure.RefreshTokenRepository.Helpers;
+using Infrastructure.RefreshTokenRepository.Models;
 
-namespace UnitTests.ValidRefreshTokenCollectionTests;
+namespace UnitTests.Infrastructure;
 
 public class ValidRefreshTokenCollectionTests
 {

@@ -1,5 +1,5 @@
 ﻿using Infrastructure.JwtTokenSystem.Manager;
-using Infrastructure.RefreshTokenSystem.Repository;
+using Infrastructure.RefreshTokenRepository;
 
 namespace Infrastructure.JwtTokenSystem.Service;
 

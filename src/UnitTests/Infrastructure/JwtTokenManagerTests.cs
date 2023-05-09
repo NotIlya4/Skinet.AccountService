@@ -3,7 +3,7 @@ using System.Text;
 using Infrastructure.JwtTokenSystem.Manager;
 using Microsoft.IdentityModel.Tokens;
 
-namespace UnitTests.JwtTokenManagerTests;
+namespace UnitTests.Infrastructure;
 
 public class JwtTokenManagerTests
 {
