@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Infrastructure.JwtTokenManager;
+namespace Infrastructure.JwtTokenHelper;
 
 public class JwtTokenHelper : IJwtTokenHelper
 {

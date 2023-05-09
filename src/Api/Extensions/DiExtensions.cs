@@ -5,7 +5,7 @@ using Domain.Exceptions;
 using ExceptionCatcherMiddleware.Extensions;
 using Infrastructure.EntityFramework;
 using Infrastructure.EntityFramework.Helpers;
-using Infrastructure.JwtTokenManager;
+using Infrastructure.JwtTokenHelper;
 using Infrastructure.JwtTokenPairService;
 using Infrastructure.RefreshTokenRepository;
 using Infrastructure.RefreshTokenRepository.Helpers;

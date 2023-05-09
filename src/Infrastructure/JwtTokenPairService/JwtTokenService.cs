@@ -1,4 +1,4 @@
-﻿using Infrastructure.JwtTokenManager;
+﻿using Infrastructure.JwtTokenHelper;
 using Infrastructure.RefreshTokenRepository;
 
 namespace Infrastructure.JwtTokenPairService;

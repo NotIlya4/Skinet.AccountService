@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.JwtTokenManager;
+﻿namespace Infrastructure.JwtTokenHelper;
 
 public interface IJwtTokenHelper
 {

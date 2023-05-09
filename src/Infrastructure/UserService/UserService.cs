@@ -1,5 +1,5 @@
 ﻿using Domain.Entities;
-using Infrastructure.JwtTokenManager;
+using Infrastructure.JwtTokenHelper;
 using Infrastructure.JwtTokenPairService;
 using Infrastructure.UserRepository;
 using Infrastructure.UserRepository.Exceptions;
