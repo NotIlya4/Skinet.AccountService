@@ -6,24 +6,32 @@ namespace UnitTests;
 public class EmailConstructorTests
 {
     [Fact]
-    public void OneCharacterBeforeAtSign_ValidEmail()
+    public void OneCharacterBeforeAtSign_CreateInstance()
     {
-        string email = "a@email.com";
-        new Email(email);
+        new Email("a@email.com");
     }
 
     [Fact]
-    public void OnlyNumberBeforeAtSign_ValidEmail()
+    public void OnlyNumberBeforeAtSign_CreateInstance()
     {
-        string email = "1@email.com";
-        new Email(email);
+        new Email("1@email.com");
     }
 
     [Fact]
-    public void NotLetterOrDigitBeforeAtSign_ThrowDomainValidationException()
+    public void SpaceInEmail_Throw()
     {
-        string email = "!@email.com";
-        
-        Assert.Throws<DomainValidationException>(() => new Email(email));
+        Assert.Throws<DomainValidationException>(() => new Email("a @email.com"));
+    }
+
+    [Fact]
+    public void EmailWithoutAtSign_Throw()
+    {
+        Assert.Throws<DomainValidationException>(() => new Email("aemail.com"));
+    }
+
+    [Fact]
+    public void NotLetterOrDigitBeforeAtSign_Throw()
+    {
+        Assert.Throws<DomainValidationException>(() => new Email("!.&^@email.com"));
     }
 }
