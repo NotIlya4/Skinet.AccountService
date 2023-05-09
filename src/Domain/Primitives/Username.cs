@@ -13,7 +13,7 @@ public record Username
             throw DomainValidationException.CannotBeEmpty(nameof(Username));
         }
         
-        if (ContainsOnlyLettersAndDigits(value))
+        if (value.Any(s => !char.IsLetterOrDigit(s)))
         {
             throw new DomainValidationException("Username can consist only of letters and digits");
         }
@@ -24,10 +24,5 @@ public record Username
     public override string ToString()
     {
         return Value;
-    }
-
-    private bool ContainsOnlyLettersAndDigits(string value)
-    {
-        return value.Any(s => !char.IsLetterOrDigit(s));
     }
 }

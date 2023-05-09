@@ -1,13 +1,13 @@
 ﻿using System.Text;
-using Infrastructure.JwtTokenSystem.Manager;
-using Infrastructure.RefreshTokenSystem.Repository;
+using Infrastructure.JwtTokenHelper;
+using Infrastructure.RefreshTokenRepository.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Extensions;
 
 public static class ConfigurationExtensions
 {
-    public static JwtTokenManagerOptions GetJwtTokenManagerOptions(this IConfiguration config, string? key = null)
+    public static JwtTokenHelperOptions GetJwtTokenManagerOptions(this IConfiguration config, string? key = null)
     {
         if (key is not null)
         {
@@ -19,7 +19,7 @@ public static class ConfigurationExtensions
         string issuer = config.GetRequiredValue("Issuer");
         string audience = config.GetRequiredValue("Audience");
 
-        return new JwtTokenManagerOptions(
+        return new JwtTokenHelperOptions(
             secret: secret,
             expire: expire,
             issuer: issuer,

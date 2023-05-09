@@ -1,6 +1,6 @@
 ﻿using Api.Extensions;
-using Infrastructure.JwtTokenSystem.Manager;
-using Infrastructure.RefreshTokenSystem.Repository;
+using Infrastructure.JwtTokenHelper;
+using Infrastructure.RefreshTokenRepository.Models;
 
 namespace Api.Properties;
 
@@ -18,7 +18,7 @@ public class ParametersProvider
         return _config.GetRefreshTokenRepositoryOptions("RefreshTokenRepositoryOptions");
     }
 
-    public JwtTokenManagerOptions GetJwtTokenManagerOptions()
+    public JwtTokenHelperOptions GetJwtTokenManagerOptions()
     {
         return _config.GetJwtTokenManagerOptions("JwtTokenManagerOptions");
     }

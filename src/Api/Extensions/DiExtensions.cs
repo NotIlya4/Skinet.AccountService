@@ -5,13 +5,14 @@ using Domain.Exceptions;
 using ExceptionCatcherMiddleware.Extensions;
 using Infrastructure.EntityFramework;
 using Infrastructure.EntityFramework.Helpers;
-using Infrastructure.JwtTokenSystem.Manager;
-using Infrastructure.JwtTokenSystem.Service;
-using Infrastructure.RefreshTokenSystem;
-using Infrastructure.RefreshTokenSystem.Repository;
-using Infrastructure.UserSystem.Repository;
-using Infrastructure.UserSystem.Service;
-using Infrastructure.UserSystem.Service.Helpers;
+using Infrastructure.JwtTokenHelper;
+using Infrastructure.JwtTokenPairService;
+using Infrastructure.RefreshTokenRepository;
+using Infrastructure.RefreshTokenRepository.Helpers;
+using Infrastructure.RefreshTokenRepository.Models;
+using Infrastructure.UserRepository;
+using Infrastructure.UserService;
+using Infrastructure.UserService.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
@@ -52,11 +53,11 @@ public static class DiExtensions
         services.AddScoped<DataMapper>();
     }
 
-    public static void AddJwtTokenServices(this IServiceCollection services, JwtTokenManagerOptions jwtTokenManagerOptions)
+    public static void AddJwtTokenServices(this IServiceCollection services, JwtTokenHelperOptions jwtTokenHelperOptions)
     {
         services.AddScoped<IJwtTokenService, JwtTokenService>();
-        services.AddScoped<IJwtTokenManager, JwtTokenManager>();
-        services.AddSingleton(jwtTokenManagerOptions);
+        services.AddScoped<IJwtTokenHelper, JwtTokenHelper>();
+        services.AddSingleton(jwtTokenHelperOptions);
     }
 
     public static void AddRedisForRefreshTokenRepository(this IServiceCollection services, string redisConnectionString)
