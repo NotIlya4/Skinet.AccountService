@@ -94,7 +94,7 @@ public static class DiExtensions
 
     public static void AddRepositories(this IServiceCollection services, RefreshTokenRepositoryOptions options)
     {
-        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddSingleton(options);
         services.AddScoped<RefreshTokenSerializer>();
     }

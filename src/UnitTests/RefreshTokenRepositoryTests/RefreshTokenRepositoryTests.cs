@@ -8,7 +8,7 @@ namespace UnitTests.RefreshTokenRepositoryTests;
 
 public class RefreshTokenRepositoryTests : IDisposable
 {
-    public RefreshTokenRepository Repository { get; }
+    public RefreshTokenService Service { get; }
     public IDatabase Redis { get; }
     public RefreshTokenSerializer Serializer { get; }
     public Guid UserWithRandomTokens { get; } = new Guid("5a1e1ce5-7734-4fdb-a721-2cc70f316c81");
@@ -24,7 +24,7 @@ public class RefreshTokenRepositoryTests : IDisposable
         Redis.Execute("FLUSHDB");
         Serializer = new RefreshTokenSerializer();
 
-        Repository = new RefreshTokenRepository(Redis, Serializer,
+        Service = new RefreshTokenService(Redis, Serializer,
             new RefreshTokenRepositoryOptions(TimeSpan.FromDays(1)));
 
         ExpiredToken1 = new TimestampRefreshToken(
@@ -55,14 +55,14 @@ public class RefreshTokenRepositoryTests : IDisposable
     [Fact]
     public async Task StrictDelete_SomeTokensExpireAndSomeNot_SuccessfullyDeleteUnExpiredToken()
     {
-        await Repository.StrictDelete(UserWithRandomTokens, ValidToken2.RefreshToken);
-        await Repository.StrictDelete(UserWithRandomTokens, ValidToken1.RefreshToken);
+        await Service.StrictDelete(UserWithRandomTokens, ValidToken2.RefreshToken);
+        await Service.StrictDelete(UserWithRandomTokens, ValidToken1.RefreshToken);
     }
 
     [Fact]
     public async Task StrictDelete_DeleteSameValidTokenTwice_ThrowExceptionOnSecondTime()
     {
-        await Repository.StrictDelete(UserWithRandomTokens, ValidToken2.RefreshToken);
+        await Service.StrictDelete(UserWithRandomTokens, ValidToken2.RefreshToken);
 
         await AssertStrictDeleteThrows(UserWithRandomTokens, ValidToken2.RefreshToken);
     }
@@ -77,7 +77,7 @@ public class RefreshTokenRepositoryTests : IDisposable
     [Fact]
     public async Task DeleteAllForUser_StrictDeleteValidToken_ThrowNotFoundException()
     {
-        await Repository.DeleteAllForUser(UserWithRandomTokens);
+        await Service.DeleteAllForUser(UserWithRandomTokens);
 
         await AssertStrictDeleteThrows(UserWithRandomTokens, ValidToken1.RefreshToken);
         await AssertStrictDeleteThrows(UserWithRandomTokens, ValidToken2.RefreshToken);
@@ -86,15 +86,15 @@ public class RefreshTokenRepositoryTests : IDisposable
     [Fact]
     public async Task Add_AddToken_SuccessfulStrictDelete()
     {
-        await Repository.Add(UserWithRandomTokens, new Guid("8df2e98a-55be-48fe-8a0e-fa870aa601e9"));
-        await Repository.StrictDelete(UserWithRandomTokens, new Guid("8df2e98a-55be-48fe-8a0e-fa870aa601e9"));
+        await Service.Add(UserWithRandomTokens, new Guid("8df2e98a-55be-48fe-8a0e-fa870aa601e9"));
+        await Service.StrictDelete(UserWithRandomTokens, new Guid("8df2e98a-55be-48fe-8a0e-fa870aa601e9"));
     }
 
     public async Task AssertStrictDeleteThrows(Guid userId, Guid token)
     {
         await Assert.ThrowsAsync<RefreshTokenNotFoundException>(async () =>
         {
-            await Repository.StrictDelete(userId, token);
+            await Service.StrictDelete(userId, token);
         });
     }
     

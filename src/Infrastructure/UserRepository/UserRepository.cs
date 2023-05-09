@@ -2,6 +2,7 @@
 using Infrastructure.EntityFramework;
 using Infrastructure.EntityFramework.Helpers;
 using Infrastructure.EntityFramework.Models;
+using Infrastructure.UserRepository.Exceptions;
 using Infrastructure.UserRepository.Extensions;
 
 namespace Infrastructure.UserRepository;
@@ -20,7 +21,18 @@ public class UserRepository : IUserRepository
     public async Task Insert(User user, string passwordHash)
     {
         UserData userData = _dataMapper.MapUser(user, passwordHash);
-        await _dbContext.Users.AddAsync(userData);
+        
+        try
+        {
+            await _dbContext.GetUser(UserRepositoryStrictFilter.Id, user.Id.ToString());
+            _dbContext.Users.Update(userData);
+
+        }
+        catch (UserNotFoundException)
+        {
+            await _dbContext.Users.AddAsync(userData);
+        }
+        
         await _dbContext.SaveChangesAsync();
     }
 

@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.RefreshTokenRepository;
 
-public interface IRefreshTokenRepository
+public interface IRefreshTokenService
 {
     public Task Add(Guid userId, Guid token);
     public Task StrictDelete(Guid userId, Guid token);

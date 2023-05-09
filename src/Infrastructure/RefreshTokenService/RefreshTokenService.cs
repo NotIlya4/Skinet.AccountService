@@ -4,13 +4,13 @@ using StackExchange.Redis;
 
 namespace Infrastructure.RefreshTokenRepository;
 
-public class RefreshTokenRepository : IRefreshTokenRepository
+public class RefreshTokenService : IRefreshTokenService
 {
     private readonly IDatabase _redis;
     private readonly RefreshTokenSerializer _serializer;
     private readonly RefreshTokenRepositoryOptions _options;
 
-    public RefreshTokenRepository(IDatabase redis, RefreshTokenSerializer serializer, RefreshTokenRepositoryOptions options)
+    public RefreshTokenService(IDatabase redis, RefreshTokenSerializer serializer, RefreshTokenRepositoryOptions options)
     {
         _redis = redis;
         _serializer = serializer;
