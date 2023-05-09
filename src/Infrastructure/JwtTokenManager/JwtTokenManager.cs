@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Infrastructure.JwtTokenSystem.Manager;
+namespace Infrastructure.JwtTokenManager;
 
 public class JwtTokenManager : IJwtTokenManager
 {

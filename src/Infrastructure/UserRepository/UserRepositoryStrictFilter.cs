@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.UserSystem.Repository;
+﻿namespace Infrastructure.UserRepository;
 
 public enum UserRepositoryStrictFilter
 {

@@ -1,12 +1,12 @@
 ﻿using Domain.Entities;
-using Infrastructure.JwtTokenSystem.Manager;
-using Infrastructure.JwtTokenSystem.Service;
-using Infrastructure.UserSystem.Repository;
-using Infrastructure.UserSystem.Repository.Exceptions;
-using Infrastructure.UserSystem.Service.Helpers;
-using Infrastructure.UserSystem.Service.Models;
+using Infrastructure.JwtTokenManager;
+using Infrastructure.JwtTokenPairService;
+using Infrastructure.UserRepository;
+using Infrastructure.UserRepository.Exceptions;
+using Infrastructure.UserService.Helpers;
+using Infrastructure.UserService.Models;
 
-namespace Infrastructure.UserSystem.Service;
+namespace Infrastructure.UserService;
 
 public class UserService : IUserService
 {

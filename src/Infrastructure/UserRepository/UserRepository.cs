@@ -2,9 +2,9 @@
 using Infrastructure.EntityFramework;
 using Infrastructure.EntityFramework.Helpers;
 using Infrastructure.EntityFramework.Models;
-using Infrastructure.UserSystem.Repository.Extensions;
+using Infrastructure.UserRepository.Extensions;
 
-namespace Infrastructure.UserSystem.Repository;
+namespace Infrastructure.UserRepository;
 
 public class UserRepository : IUserRepository
 {

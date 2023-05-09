@@ -1,6 +1,6 @@
 ﻿using Domain.Primitives;
 
-namespace Infrastructure.UserSystem.Service.Helpers;
+namespace Infrastructure.UserService.Helpers;
 
 public interface IPasswordHasher
 {

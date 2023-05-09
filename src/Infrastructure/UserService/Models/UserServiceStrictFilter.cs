@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.UserSystem.Service.Models;
+﻿namespace Infrastructure.UserService.Models;
 
 public enum UserServiceStrictFilter
 {

@@ -1,7 +1,7 @@
 ﻿using Domain.Primitives;
 using BC = BCrypt.Net.BCrypt;
 
-namespace Infrastructure.UserSystem.Service.Helpers;
+namespace Infrastructure.UserService.Helpers;
 
 public class PasswordHasher : IPasswordHasher
 {

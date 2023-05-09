@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace Infrastructure.JwtTokenSystem.Manager;
+namespace Infrastructure.JwtTokenManager;
 
 public record JwtTokenManagerOptions
 {

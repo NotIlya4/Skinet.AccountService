@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Infrastructure.UserSystem.Repository.Exceptions;
+using Infrastructure.UserRepository.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.EntityFramework.Extensions;

@@ -3,7 +3,7 @@ using Infrastructure.EntityFramework;
 using Infrastructure.EntityFramework.Extensions;
 using Infrastructure.EntityFramework.Models;
 
-namespace Infrastructure.UserSystem.Repository.Extensions;
+namespace Infrastructure.UserRepository.Extensions;
 
 public static class UserQueryableExtensions
 {

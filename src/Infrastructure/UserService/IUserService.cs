@@ -1,8 +1,8 @@
 ﻿using Domain.Entities;
-using Infrastructure.JwtTokenSystem.Service;
-using Infrastructure.UserSystem.Service.Models;
+using Infrastructure.JwtTokenPairService;
+using Infrastructure.UserService.Models;
 
-namespace Infrastructure.UserSystem.Service;
+namespace Infrastructure.UserService;
 
 public interface IUserService
 {

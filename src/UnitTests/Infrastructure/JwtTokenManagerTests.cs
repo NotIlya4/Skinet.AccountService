@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Infrastructure.JwtTokenSystem.Manager;
+using Infrastructure.JwtTokenManager;
 using Microsoft.IdentityModel.Tokens;
 
 namespace UnitTests.Infrastructure;

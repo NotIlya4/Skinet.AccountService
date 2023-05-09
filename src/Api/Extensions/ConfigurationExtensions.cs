@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Infrastructure.JwtTokenSystem.Manager;
+using Infrastructure.JwtTokenManager;
 using Infrastructure.RefreshTokenRepository.Models;
 using Microsoft.IdentityModel.Tokens;
 

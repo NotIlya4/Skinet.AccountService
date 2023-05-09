@@ -1,5 +1,5 @@
 ﻿using Api.Extensions;
-using Infrastructure.JwtTokenSystem.Manager;
+using Infrastructure.JwtTokenManager;
 using Infrastructure.RefreshTokenRepository.Models;
 
 namespace Api.Properties;

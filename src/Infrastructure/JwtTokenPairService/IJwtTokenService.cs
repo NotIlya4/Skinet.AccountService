@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.JwtTokenSystem.Service;
+﻿namespace Infrastructure.JwtTokenPairService;
 
 public interface IJwtTokenService
 {

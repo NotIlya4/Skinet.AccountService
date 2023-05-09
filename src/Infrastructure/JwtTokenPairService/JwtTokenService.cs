@@ -1,7 +1,7 @@
-﻿using Infrastructure.JwtTokenSystem.Manager;
+﻿using Infrastructure.JwtTokenManager;
 using Infrastructure.RefreshTokenRepository;
 
-namespace Infrastructure.JwtTokenSystem.Service;
+namespace Infrastructure.JwtTokenPairService;
 
 public class JwtTokenService : IJwtTokenService
 {
