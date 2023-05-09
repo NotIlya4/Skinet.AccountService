@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.JwtTokenManager;
 
-public interface IJwtTokenManager
+public interface IJwtTokenHelper
 {
     public string CreateJwtToken(Guid userId);
     public Guid ValidateAndExtractUserId(string jwtToken);

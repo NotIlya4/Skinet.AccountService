@@ -53,11 +53,11 @@ public static class DiExtensions
         services.AddScoped<DataMapper>();
     }
 
-    public static void AddJwtTokenServices(this IServiceCollection services, JwtTokenManagerOptions jwtTokenManagerOptions)
+    public static void AddJwtTokenServices(this IServiceCollection services, JwtTokenHelperOptions jwtTokenHelperOptions)
     {
         services.AddScoped<IJwtTokenService, JwtTokenService>();
-        services.AddScoped<IJwtTokenManager, JwtTokenManager>();
-        services.AddSingleton(jwtTokenManagerOptions);
+        services.AddScoped<IJwtTokenHelper, JwtTokenHelper>();
+        services.AddSingleton(jwtTokenHelperOptions);
     }
 
     public static void AddRedisForRefreshTokenRepository(this IServiceCollection services, string redisConnectionString)

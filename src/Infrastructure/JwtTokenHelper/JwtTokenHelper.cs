@@ -4,13 +4,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.JwtTokenManager;
 
-public class JwtTokenManager : IJwtTokenManager
+public class JwtTokenHelper : IJwtTokenHelper
 {
-    private readonly JwtTokenManagerOptions _options;
+    private readonly JwtTokenHelperOptions _options;
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
     private readonly TokenValidationParameters _validationParameters;
 
-    public JwtTokenManager(JwtTokenManagerOptions options)
+    public JwtTokenHelper(JwtTokenHelperOptions options)
     {
         _options = options;
         _validationParameters = new TokenValidationParameters

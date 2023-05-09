@@ -5,26 +5,26 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace UnitTests.Infrastructure;
 
-public class JwtTokenManagerTests
+public class JwtTokenHelperTests
 {
-    public JwtTokenManager Manager { get; }
-    public JwtTokenManagerOptions Options { get; }
+    public JwtTokenHelper Helper { get; }
+    public JwtTokenHelperOptions Options { get; }
     public Guid UserId { get; } = new Guid("a6e96499-c80a-474d-a5d4-0ad065eb19c0");
     public string RawToken { get; }
     public JwtSecurityToken Token { get; }
     public string RawExpiredToken { get; }
     public JwtSecurityToken ExpiredToken { get; }
     
-    public JwtTokenManagerTests()
+    public JwtTokenHelperTests()
     {
-        Options = new JwtTokenManagerOptions(
+        Options = new JwtTokenHelperOptions(
             issuer: "AccountService",
             audience: "Api",
             secret: new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1tsJusT@S@mpleP@ssword!")),
             expire: TimeSpan.FromMinutes(15));
         
-        Manager = new JwtTokenManager(Options);
-        RawToken = Manager.CreateJwtToken(UserId);
+        Helper = new JwtTokenHelper(Options);
+        RawToken = Helper.CreateJwtToken(UserId);
         Token = new JwtSecurityToken(RawToken);
         ExpiredToken = AlterExpires(Token, DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow.AddMinutes(-15));
         RawExpiredToken = Serialize(ExpiredToken);
@@ -63,13 +63,13 @@ public class JwtTokenManagerTests
     [Fact]
     public void ValidateAndExtractUserId_ExpiredToken_ThrowException()
     {
-        Assert.Throws<SecurityTokenExpiredException>(() => { Manager.ValidateAndExtractUserId(RawExpiredToken); });
+        Assert.Throws<SecurityTokenExpiredException>(() => { Helper.ValidateAndExtractUserId(RawExpiredToken); });
     }
 
     [Fact]
     public void ValidateAndExtractUserId_ValidToken_UserId()
     {
-        Guid result = Manager.ValidateAndExtractUserId(RawToken);
+        Guid result = Helper.ValidateAndExtractUserId(RawToken);
         
         Assert.Equal(UserId, result);
     }
@@ -77,7 +77,7 @@ public class JwtTokenManagerTests
     [Fact]
     public void ExtractUserId_InvalidToken_UserId()
     {
-        Guid result = Manager.ExtractUserId(RawToken);
+        Guid result = Helper.ExtractUserId(RawToken);
         
         Assert.Equal(UserId, result);
     }

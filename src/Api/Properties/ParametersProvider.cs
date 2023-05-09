@@ -18,7 +18,7 @@ public class ParametersProvider
         return _config.GetRefreshTokenRepositoryOptions("RefreshTokenRepositoryOptions");
     }
 
-    public JwtTokenManagerOptions GetJwtTokenManagerOptions()
+    public JwtTokenHelperOptions GetJwtTokenManagerOptions()
     {
         return _config.GetJwtTokenManagerOptions("JwtTokenManagerOptions");
     }

@@ -6,12 +6,12 @@ namespace Infrastructure.JwtTokenPairService;
 public class JwtTokenService : IJwtTokenService
 {
     private readonly IRefreshTokenRepository _refreshTokenRepository;
-    private readonly IJwtTokenManager _jwtTokenManager;
+    private readonly IJwtTokenHelper _jwtTokenHelper;
 
-    public JwtTokenService(IRefreshTokenRepository refreshTokenRepository, IJwtTokenManager jwtTokenManager)
+    public JwtTokenService(IRefreshTokenRepository refreshTokenRepository, IJwtTokenHelper jwtTokenHelper)
     {
         _refreshTokenRepository = refreshTokenRepository;
-        _jwtTokenManager = jwtTokenManager;
+        _jwtTokenHelper = jwtTokenHelper;
     }
 
     public async Task<JwtTokenPair> AddNewRefreshToken(Guid userId)
@@ -20,7 +20,7 @@ public class JwtTokenService : IJwtTokenService
         
         await _refreshTokenRepository.Add(userId, newRefreshToken);
 
-        string newJwtToken = _jwtTokenManager.CreateJwtToken(userId);
+        string newJwtToken = _jwtTokenHelper.CreateJwtToken(userId);
 
         return new JwtTokenPair(
             jwtToken: newJwtToken,

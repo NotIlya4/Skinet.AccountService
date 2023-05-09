@@ -11,14 +11,14 @@ namespace Infrastructure.UserService;
 public class UserService : IUserService
 {
     private readonly IJwtTokenService _jwtTokenService;
-    private readonly IJwtTokenManager _jwtTokenManager;
+    private readonly IJwtTokenHelper _jwtTokenHelper;
     private readonly IUserRepository _repository;
     private readonly IPasswordHasher _passwordHasher;
 
-    public UserService(IJwtTokenService jwtTokenService, IJwtTokenManager jwtTokenManager, IUserRepository repository, IPasswordHasher passwordHasher)
+    public UserService(IJwtTokenService jwtTokenService, IJwtTokenHelper jwtTokenHelper, IUserRepository repository, IPasswordHasher passwordHasher)
     {
         _jwtTokenService = jwtTokenService;
-        _jwtTokenManager = jwtTokenManager;
+        _jwtTokenHelper = jwtTokenHelper;
         _repository = repository;
         _passwordHasher = passwordHasher;
     }
@@ -48,7 +48,7 @@ public class UserService : IUserService
 
     public async Task<JwtTokenPair> UpdateJwtPair(JwtTokenPair jwtTokenPair)
     {
-        return await _jwtTokenService.UpdatePair(_jwtTokenManager.ExtractUserId(jwtTokenPair.JwtToken), jwtTokenPair.RefreshToken);
+        return await _jwtTokenService.UpdatePair(_jwtTokenHelper.ExtractUserId(jwtTokenPair.JwtToken), jwtTokenPair.RefreshToken);
     }
 
     public async Task<User> GetUser(UserServiceStrictFilter filter, string value)
@@ -66,7 +66,7 @@ public class UserService : IUserService
 
         if (filter == UserServiceStrictFilter.Jwt)
         {
-            Guid userId = _jwtTokenManager.ValidateAndExtractUserId(value);
+            Guid userId = _jwtTokenHelper.ValidateAndExtractUserId(value);
             user = await _repository.Get(UserRepositoryStrictFilter.Id, userId.ToString());
         }
         
@@ -80,7 +80,7 @@ public class UserService : IUserService
 
     public async Task Logout(JwtTokenPair jwtTokenPair)
     {
-        await _jwtTokenService.ExpireRefreshToken(_jwtTokenManager.ExtractUserId(jwtTokenPair.JwtToken), jwtTokenPair.RefreshToken);
+        await _jwtTokenService.ExpireRefreshToken(_jwtTokenHelper.ExtractUserId(jwtTokenPair.JwtToken), jwtTokenPair.RefreshToken);
     }
 
     public async Task LogOutInAllEntries(Guid userId)
