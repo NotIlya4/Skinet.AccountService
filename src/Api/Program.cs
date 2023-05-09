@@ -1,28 +1,29 @@
 using Api.Extensions;
 using Api.Properties;
 using ExceptionCatcherMiddleware.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
-ParametersProvider parametersProvider = new(builder.Configuration);
+ParametersProvider parameters = new(builder.Configuration);
 
-services.AddRefreshTokenRepository(parametersProvider.GetRefreshTokenRepositoryOptions());
-services.AddJwtTokenServices(parametersProvider.GetJwtTokenManagerOptions());
-services.AddRedisForRefreshTokenRepository(parametersProvider.GetRedis());
-
-services.AddConfiguredDbContext(parametersProvider.GetSqlServer());
+services.AddRepositories(parameters.RefreshTokenRepositoryOptions);
+services.AddRedis(parameters.Redis);
+services.AddConfiguredExceptionCatcherMiddleware();
+services.AddConfiguredDbContext(parameters.SqlServer);
 services.AddMappers();
-services.AddUserService();
+services.AddServices(parameters.JwtTokenHelperOptions);
+services.AddConfiguredSwaggerGen();
+builder.AddConfiguredSerilog(parameters.Seq);
 
 services.AddControllers();
 services.AddEndpointsApiExplorer();
-services.AddSwaggerGen(options => { options.DescribeAllParametersInCamelCase(); });
-services.AddConfiguredExceptionCatcherMiddleware();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
-app.ConfigureDb(parametersProvider);
+app.ConfigureDb(parameters);
 
+app.UseSerilogRequestLogging();
 app.UseExceptionCatcherMiddleware();
 app.UseSwagger();
 app.UseSwaggerUI();

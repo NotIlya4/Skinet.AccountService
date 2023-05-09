@@ -15,7 +15,10 @@ using Infrastructure.UserService;
 using Infrastructure.UserService.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Events;
 using StackExchange.Redis;
+using SwaggerEnrichers.Extensions;
 
 namespace Api.Extensions;
 
@@ -31,6 +34,15 @@ public static class DiExtensions
         });
     }
 
+    public static void AddConfiguredSwaggerGen(this IServiceCollection services)
+    {
+        services.AddSwaggerGen(options =>
+        {
+            options.AddEnricherFilters();
+            options.DescribeAllParametersInCamelCase();
+        });
+    }
+
     public static void AddConfiguredDbContext(this IServiceCollection services, string connectionString)
     {
         services.AddDbContext<AppDbContext>(builder =>
@@ -40,11 +52,29 @@ public static class DiExtensions
         });
     }
 
-    public static void AddUserService(this IServiceCollection services)
+    public static void AddConfiguredSerilog(this WebApplicationBuilder builder, string seqUrl)
+    {
+        builder.Services.AddHttpContextAccessor();
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+            .Enrich.FromLogContext()
+            .Enrich.WithCorrelationIdHeader("x-request-id")
+            .WriteTo.Console()
+            .WriteTo.Seq(seqUrl)
+            .Enrich.WithProperty("ServiceName", "AccountService")
+            .CreateLogger();
+        builder.Host.UseSerilog();
+    }
+
+    public static void AddServices(this IServiceCollection services, JwtTokenHelperOptions jwtTokenManagerOptions)
     {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IJwtTokenHelper, JwtTokenHelper>();
+        services.AddSingleton(jwtTokenManagerOptions);
     }
 
     public static void AddMappers(this IServiceCollection services)
@@ -53,14 +83,7 @@ public static class DiExtensions
         services.AddScoped<DataMapper>();
     }
 
-    public static void AddJwtTokenServices(this IServiceCollection services, JwtTokenHelperOptions jwtTokenHelperOptions)
-    {
-        services.AddScoped<IJwtTokenService, JwtTokenService>();
-        services.AddScoped<IJwtTokenHelper, JwtTokenHelper>();
-        services.AddSingleton(jwtTokenHelperOptions);
-    }
-
-    public static void AddRedisForRefreshTokenRepository(this IServiceCollection services, string redisConnectionString)
+    public static void AddRedis(this IServiceCollection services, string redisConnectionString)
     {
         services.AddSingleton(_ =>
         {
@@ -69,7 +92,7 @@ public static class DiExtensions
         });
     }
 
-    public static void AddRefreshTokenRepository(this IServiceCollection services, RefreshTokenRepositoryOptions options)
+    public static void AddRepositories(this IServiceCollection services, RefreshTokenRepositoryOptions options)
     {
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddSingleton(options);

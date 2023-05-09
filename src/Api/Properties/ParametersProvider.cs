@@ -13,33 +13,17 @@ public class ParametersProvider
         _config = config;
     }
 
-    public RefreshTokenRepositoryOptions GetRefreshTokenRepositoryOptions()
-    {
-        return _config.GetRefreshTokenRepositoryOptions("RefreshTokenRepositoryOptions");
-    }
+    public RefreshTokenRepositoryOptions RefreshTokenRepositoryOptions => _config.GetRefreshTokenRepositoryOptions("RefreshTokenRepositoryOptions");
 
-    public JwtTokenHelperOptions GetJwtTokenManagerOptions()
-    {
-        return _config.GetJwtTokenManagerOptions("JwtTokenManagerOptions");
-    }
+    public JwtTokenHelperOptions JwtTokenHelperOptions => _config.GetJwtTokenManagerOptions("JwtTokenHelperOptions");
 
-    public string GetSqlServer()
-    {
-        return _config.GetSqlServerConnectionString("SqlServer");
-    }
+    public string SqlServer => _config.GetSqlServerConnectionString("SqlServer");
     
-    public string GetRedis()
-    {
-        return _config.GetRedisConnectionString("Redis");
-    }
+    public string Redis => _config.GetRedisConnectionString("Redis");
 
-    public bool AutoMigrate()
-    {
-        return _config.GetRequiredValue<bool>("AutoMigrate");
-    }
+    public string Seq => _config.GetRequiredValue<string>("SeqUrl");
 
-    public bool AutoSeed()
-    {
-        return _config.GetRequiredValue<bool>("AutoSeed");
-    }
+    public bool AutoMigrate => _config.GetRequiredValue<bool>("AutoMigrate");
+
+    public bool AutoSeed => _config.GetRequiredValue<bool>("AutoSeed");
 }
