@@ -14,7 +14,7 @@ public class JwtTokenService : IJwtTokenService
         _jwtTokenHelper = jwtTokenHelper;
     }
 
-    public async Task<JwtTokenPair> AddNewRefreshToken(Guid userId)
+    public async Task<JwtTokenPair> CreateNewPair(Guid userId)
     {
         Guid newRefreshToken = Guid.NewGuid();
         
@@ -30,7 +30,7 @@ public class JwtTokenService : IJwtTokenService
     public async Task<JwtTokenPair> UpdatePair(Guid userId, Guid refreshToken)
     {
         await _refreshTokenService.StrictDelete(userId: userId, token: refreshToken);
-        return await AddNewRefreshToken(userId);
+        return await CreateNewPair(userId);
     }
 
     public async Task ExpireRefreshToken(Guid userId, Guid refreshToken)

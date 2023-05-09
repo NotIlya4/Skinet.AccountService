@@ -28,7 +28,7 @@ public class UserService : IUserService
         User user = new User(Guid.NewGuid(), registerCredentials.Username, registerCredentials.Email);
         await _repository.Insert(user, _passwordHasher.Hash(registerCredentials.Password));
         
-        JwtTokenPair jwtPair = await _jwtTokenService.AddNewRefreshToken(user.Id);
+        JwtTokenPair jwtPair = await _jwtTokenService.CreateNewPair(user.Id);
         return jwtPair;
     }
 
@@ -42,7 +42,7 @@ public class UserService : IUserService
             throw new InvalidOperationException("Wrong password");
         }
         
-        JwtTokenPair jwtPair = await _jwtTokenService.AddNewRefreshToken(user.Id);
+        JwtTokenPair jwtPair = await _jwtTokenService.CreateNewPair(user.Id);
         return jwtPair;
     }
 
