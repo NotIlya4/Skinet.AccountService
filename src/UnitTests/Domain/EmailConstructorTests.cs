@@ -3,7 +3,7 @@ using Domain.Primitives;
 
 namespace UnitTests;
 
-public class Email_ConstructorTests
+public class EmailConstructorTests
 {
     [Fact]
     public void OneCharacterBeforeAtSign_ValidEmail()

@@ -42,7 +42,7 @@ public record ValidRefreshTokenCollection
 
     public List<TimestampRefreshToken> ToList()
     {
-        return RefreshTokens;
+        return RefreshTokens.ToList();
     }
 
     private void CleanExpireTokens()
