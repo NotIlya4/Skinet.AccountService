@@ -1,5 +1,5 @@
 ﻿using Infrastructure.JwtTokenHelper;
-using Infrastructure.RefreshTokenRepository;
+using Infrastructure.RefreshTokenService;
 
 namespace Infrastructure.JwtTokenPairService;
 

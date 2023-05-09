@@ -1,7 +1,7 @@
-﻿using Infrastructure.RefreshTokenRepository.Exceptions;
-using Infrastructure.RefreshTokenRepository.Models;
+﻿using Infrastructure.RefreshTokenService.Exceptions;
+using Infrastructure.RefreshTokenService.Models;
 
-namespace Infrastructure.RefreshTokenRepository.Helpers;
+namespace Infrastructure.RefreshTokenService.Helpers;
 
 public record ValidRefreshTokenCollection
 {

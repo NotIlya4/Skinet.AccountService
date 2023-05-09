@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using Infrastructure.JwtTokenHelper;
-using Infrastructure.RefreshTokenRepository.Models;
+using Infrastructure.RefreshTokenService.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Extensions;

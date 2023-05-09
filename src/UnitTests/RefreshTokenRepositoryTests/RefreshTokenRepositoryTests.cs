@@ -1,7 +1,7 @@
-﻿using Infrastructure.RefreshTokenRepository;
-using Infrastructure.RefreshTokenRepository.Exceptions;
-using Infrastructure.RefreshTokenRepository.Helpers;
-using Infrastructure.RefreshTokenRepository.Models;
+﻿using Infrastructure.RefreshTokenService;
+using Infrastructure.RefreshTokenService.Exceptions;
+using Infrastructure.RefreshTokenService.Helpers;
+using Infrastructure.RefreshTokenService.Models;
 using StackExchange.Redis;
 
 namespace UnitTests.RefreshTokenRepositoryTests;

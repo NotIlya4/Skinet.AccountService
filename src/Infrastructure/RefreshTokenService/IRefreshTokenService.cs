@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.RefreshTokenRepository;
+﻿namespace Infrastructure.RefreshTokenService;
 
 public interface IRefreshTokenService
 {

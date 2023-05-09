@@ -1,6 +1,6 @@
-﻿using Infrastructure.RefreshTokenRepository.Exceptions;
-using Infrastructure.RefreshTokenRepository.Helpers;
-using Infrastructure.RefreshTokenRepository.Models;
+﻿using Infrastructure.RefreshTokenService.Exceptions;
+using Infrastructure.RefreshTokenService.Helpers;
+using Infrastructure.RefreshTokenService.Models;
 
 namespace UnitTests.Infrastructure;
 

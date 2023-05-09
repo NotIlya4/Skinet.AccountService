@@ -1,8 +1,8 @@
-﻿using Infrastructure.RefreshTokenRepository.Helpers;
-using Infrastructure.RefreshTokenRepository.Models;
+﻿using Infrastructure.RefreshTokenService.Helpers;
+using Infrastructure.RefreshTokenService.Models;
 using StackExchange.Redis;
 
-namespace Infrastructure.RefreshTokenRepository;
+namespace Infrastructure.RefreshTokenService;
 
 public class RefreshTokenService : IRefreshTokenService
 {

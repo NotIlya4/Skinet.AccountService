@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.RefreshTokenRepository.Models;
+﻿namespace Infrastructure.RefreshTokenService.Models;
 
 public record TimestampRefreshToken
 {

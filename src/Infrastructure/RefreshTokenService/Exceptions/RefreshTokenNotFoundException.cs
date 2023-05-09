@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.RefreshTokenRepository.Exceptions;
+﻿namespace Infrastructure.RefreshTokenService.Exceptions;
 
 public class RefreshTokenNotFoundException : Exception
 {

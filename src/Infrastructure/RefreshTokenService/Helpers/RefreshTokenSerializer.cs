@@ -1,7 +1,7 @@
-﻿using Infrastructure.RefreshTokenRepository.Models;
+﻿using Infrastructure.RefreshTokenService.Models;
 using Newtonsoft.Json.Linq;
 
-namespace Infrastructure.RefreshTokenRepository.Helpers;
+namespace Infrastructure.RefreshTokenService.Helpers;
 
 public class RefreshTokenSerializer
 {

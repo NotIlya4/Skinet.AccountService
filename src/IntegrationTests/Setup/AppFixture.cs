@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace IntegrationTests.Setup;
 
@@ -10,7 +11,9 @@ public class AppFixture : IAsyncLifetime, ICollectionFixture<AppFixture>
 {
     internal WebApplicationFactory<Program> Fixture { get; private set; } = null!;
     private IServiceScope _scope = null!;
-    public SqlDbHelper Helper { get; private set; } = null!;
+    public SqlDbHelper SqlDbHelper { get; private set; } = null!;
+    public RedisHelper RedisHelper { get; private set; } = null!;
+    public IDatabase Redis { get; private set; } = null!;
     
     public async Task InitializeAsync()
     {
@@ -19,9 +22,12 @@ public class AppFixture : IAsyncLifetime, ICollectionFixture<AppFixture>
             builder.UseEnvironment("IntegrationTests");
         });
         _scope = Fixture.Services.CreateScope();
-        Helper = new SqlDbHelper(_scope.ServiceProvider.GetRequiredService<AppDbContext>());
+        SqlDbHelper = new SqlDbHelper(_scope.ServiceProvider.GetRequiredService<AppDbContext>());
+        Redis = _scope.ServiceProvider.GetRequiredService<IDatabase>();
+        RedisHelper = new RedisHelper(Redis);
 
-        await Helper.Reload();
+        await RedisHelper.Reload();
+        await SqlDbHelper.Reload();
     }
 
     public IServiceScope CreateScope()
@@ -31,7 +37,7 @@ public class AppFixture : IAsyncLifetime, ICollectionFixture<AppFixture>
 
     public async Task DisposeAsync()
     {
-        await Helper.Drop();
+        await SqlDbHelper.Drop();
         _scope.Dispose();
     }
 }
