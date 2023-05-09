@@ -12,6 +12,8 @@ public class JwtTokenManagerTests
     public Guid UserId { get; } = new Guid("a6e96499-c80a-474d-a5d4-0ad065eb19c0");
     public string RawToken { get; }
     public JwtSecurityToken Token { get; }
+    public string RawExpiredToken { get; }
+    public JwtSecurityToken ExpiredToken { get; }
     
     public JwtTokenManagerTests()
     {
@@ -24,10 +26,12 @@ public class JwtTokenManagerTests
         Manager = new JwtTokenManager(Options);
         RawToken = Manager.CreateJwtToken(UserId);
         Token = new JwtSecurityToken(RawToken);
+        ExpiredToken = AlterExpires(Token, DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow.AddMinutes(-15));
+        RawExpiredToken = Serialize(ExpiredToken);
     }
 
     [Fact]
-    public void CreateJwtToken_ValidToken_JwtTokenContainUserId()
+    public void CreateJwtToken_PassUserId_JwtTokenWithThatUserId()
     {
         Guid userId = new Guid(Token.Subject);
         
@@ -35,7 +39,7 @@ public class JwtTokenManagerTests
     }
     
     [Fact]
-    public void CreateJwtToken_ValidToken_ValidToAfter15Mins()
+    public void CreateJwtToken_ExpireSetAfter15Mins_ValidToAfter15Mins()
     {
         DateTime expectValidTo = DateTime.UtcNow.AddMinutes(15);
 
@@ -45,7 +49,7 @@ public class JwtTokenManagerTests
     }
 
     [Fact]
-    public void CreateJwtToken_ValidToken_ValidFromAndIssuedAtNow()
+    public void CreateJwtToken_CreatedTime_ValidFromAndIssuedAtNow()
     {
         DateTime issuedTime = DateTime.UtcNow;
 
@@ -57,11 +61,25 @@ public class JwtTokenManagerTests
     }
 
     [Fact]
-    public void ValidateAndGetUserId_ExpiredToken_ThrowException()
+    public void ValidateAndExtractUserId_ExpiredToken_ThrowException()
     {
-        var expiredToken = AlterExpires(Token, DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow.AddMinutes(-15));
+        Assert.Throws<SecurityTokenExpiredException>(() => { Manager.ValidateAndExtractUserId(RawExpiredToken); });
+    }
 
-        Assert.Throws<SecurityTokenExpiredException>(() => { Manager.ValidateAndExtractUserId(Serialize(expiredToken)); });
+    [Fact]
+    public void ValidateAndExtractUserId_ValidToken_UserId()
+    {
+        Guid result = Manager.ValidateAndExtractUserId(RawToken);
+        
+        Assert.Equal(UserId, result);
+    }
+
+    [Fact]
+    public void ExtractUserId_InvalidToken_UserId()
+    {
+        Guid result = Manager.ExtractUserId(RawToken);
+        
+        Assert.Equal(UserId, result);
     }
 
     private JwtSecurityToken AlterExpires(JwtSecurityToken token, DateTime notBefore, DateTime expires)
