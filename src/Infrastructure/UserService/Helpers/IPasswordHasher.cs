@@ -1,6 +1,4 @@
-﻿using Domain.Primitives;
-
-namespace Infrastructure.UserService.Helpers;
+﻿namespace Infrastructure.UserService.Helpers;
 
 public interface IPasswordHasher
 {

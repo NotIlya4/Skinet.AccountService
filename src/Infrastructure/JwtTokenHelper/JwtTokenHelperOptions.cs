@@ -1,15 +1,13 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿namespace Infrastructure.JwtTokenHelper;
 
-namespace Infrastructure.JwtTokenHelper;
-
-public record JwtTokenHelperOptions
+public class JwtTokenHelperOptions
 {
-    public SymmetricSecurityKey Secret { get; }
+    public string Secret { get; }
     public TimeSpan Expire { get; }
     public string Issuer { get; }
     public string Audience { get; }
 
-    public JwtTokenHelperOptions(SymmetricSecurityKey secret, TimeSpan expire, string issuer, string audience)
+    public JwtTokenHelperOptions(string secret, TimeSpan expire, string issuer, string audience)
     {
         Secret = secret;
         Expire = expire;

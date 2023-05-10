@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Api.ExceptionMappers;
+using Api.ExceptionCatching;
 using Api.UserController.Helpers;
 using Domain.Exceptions;
 using ExceptionCatcherMiddleware.Extensions;
@@ -7,12 +7,13 @@ using Infrastructure.EntityFramework;
 using Infrastructure.EntityFramework.Helpers;
 using Infrastructure.JwtTokenHelper;
 using Infrastructure.JwtTokenPairService;
-using Infrastructure.RefreshTokenRepository;
-using Infrastructure.RefreshTokenRepository.Helpers;
-using Infrastructure.RefreshTokenRepository.Models;
+using Infrastructure.RefreshTokenService;
+using Infrastructure.RefreshTokenService.Helpers;
+using Infrastructure.RefreshTokenService.Models;
 using Infrastructure.UserRepository;
 using Infrastructure.UserService;
 using Infrastructure.UserService.Helpers;
+using Infrastructure.ValidJwtTokenSystem;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -72,8 +73,10 @@ public static class DiExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IJwtTokenPairService, JwtTokenPairService>();
         services.AddScoped<IJwtTokenHelper, JwtTokenHelper>();
+        services.AddScoped<IValidJwtTokenFactory, ValidJwtTokenFactory>();
+        services.AddScoped<IJwtTokenValidator, JwtTokenHelper>();
         services.AddSingleton(jwtTokenManagerOptions);
     }
 
@@ -94,7 +97,7 @@ public static class DiExtensions
 
     public static void AddRepositories(this IServiceCollection services, RefreshTokenRepositoryOptions options)
     {
-        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddSingleton(options);
         services.AddScoped<RefreshTokenSerializer>();
     }

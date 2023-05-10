@@ -1,38 +1,43 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
+using Infrastructure.ValidJwtTokenSystem;
+using Infrastructure.ValidJwtTokenSystem.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.JwtTokenHelper;
 
-public class JwtTokenHelper : IJwtTokenHelper
+public class JwtTokenHelper : IJwtTokenHelper, IJwtTokenValidator
 {
     private readonly JwtTokenHelperOptions _options;
     private readonly JwtSecurityTokenHandler _tokenHandler = new();
     private readonly TokenValidationParameters _validationParameters;
+    private readonly SymmetricSecurityKey _secret;
 
     public JwtTokenHelper(JwtTokenHelperOptions options)
     {
         _options = options;
+        _secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Secret));
         _validationParameters = new TokenValidationParameters
         {
             ValidIssuer = options.Issuer,
             ValidAudience = options.Audience,
-            IssuerSigningKey = options.Secret,
+            IssuerSigningKey = _secret,
             ValidateLifetime = true,
             ValidateIssuer = true,
             ValidateAudience = true,
         };
     }
     
-    public string CreateJwtToken(Guid userId)
+    public JwtToken Create(UserId userId)
     {
-        SigningCredentials credentials = new(_options.Secret, SecurityAlgorithms.HmacSha256);
+        SigningCredentials credentials = new(_secret, SecurityAlgorithms.HmacSha256);
         
         Claim[] claims = {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Iss, _options.Issuer),
-            new Claim(JwtRegisteredClaimNames.Aud, _options.Audience),
+            new(JwtRegisteredClaimNames.Sub, userId.Value.ToString()),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Iss, _options.Issuer),
+            new(JwtRegisteredClaimNames.Aud, _options.Audience),
         };
 
         SecurityTokenDescriptor tokenDescriptor = new()
@@ -42,22 +47,23 @@ public class JwtTokenHelper : IJwtTokenHelper
             SigningCredentials = credentials
         };
 
-        return _tokenHandler.CreateEncodedJwt(tokenDescriptor);
+        string rawJwtToken = _tokenHandler.CreateEncodedJwt(tokenDescriptor);
+        return new JwtToken(rawJwtToken);
     }
 
-    public Guid ValidateAndExtractUserId(string jwtToken)
+    ValidJwtToken IJwtTokenHelper.Validate(string jwtToken)
     {
-        Validate(jwtToken);
-        return ExtractUserId(jwtToken);
+        _tokenHandler.ValidateToken(jwtToken, _validationParameters, out _);
+        return new ValidJwtToken(this, jwtToken);
     }
 
-    public Guid ExtractUserId(string jwtToken)
+    ValidJwtToken IJwtTokenHelper.Validate(JwtToken jwtToken)
     {
-        return new Guid(_tokenHandler.ReadJwtToken(jwtToken).Subject);
+        return ((IJwtTokenHelper)this).Validate(jwtToken.Raw);
     }
-
-    private void Validate(string token)
+    
+    void IJwtTokenValidator.Validate(string jwtToken)
     {
-        _tokenHandler.ValidateToken(token, _validationParameters, out _);
+        _tokenHandler.ValidateToken(jwtToken, _validationParameters, out _);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using ExceptionCatcherMiddleware.Mappers.CreatingCustomMappers;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Api.ExceptionMappers;
+namespace Api.ExceptionCatching;
 
 public class SecurityTokenExpiredExceptionMapper : IExceptionMapper<SecurityTokenExpiredException>
 {

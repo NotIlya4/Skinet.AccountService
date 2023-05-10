@@ -1,7 +1,7 @@
 ﻿using Domain.Exceptions;
 using ExceptionCatcherMiddleware.Mappers.CreatingCustomMappers;
 
-namespace Api.ExceptionMappers;
+namespace Api.ExceptionCatching;
 
 public class DomainValidationExceptionMapper : IExceptionMapper<DomainValidationException>
 {

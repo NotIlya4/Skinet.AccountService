@@ -1,5 +1,4 @@
-﻿using Domain.Primitives;
-using BC = BCrypt.Net.BCrypt;
+﻿using BC = BCrypt.Net.BCrypt;
 
 namespace Infrastructure.UserService.Helpers;
 

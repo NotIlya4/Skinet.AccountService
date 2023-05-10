@@ -1,7 +1,4 @@
-﻿using Domain.Exceptions;
-using Domain.Primitives;
-
-namespace UnitTests.Domain;
+﻿namespace UnitTests.Domain;
 
 public class PasswordConstructorTests
 {

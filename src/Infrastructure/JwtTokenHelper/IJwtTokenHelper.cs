@@ -1,8 +1,10 @@
-﻿namespace Infrastructure.JwtTokenHelper;
+﻿using Infrastructure.ValidJwtTokenSystem.Models;
+
+namespace Infrastructure.JwtTokenHelper;
 
 public interface IJwtTokenHelper
 {
-    public string CreateJwtToken(Guid userId);
-    public Guid ValidateAndExtractUserId(string jwtToken);
-    public Guid ExtractUserId(string jwtToken);
+    public ValidJwtToken Validate(string rawJwtToken);
+    public ValidJwtToken Validate(JwtToken jwtToken);
+    public JwtToken Create(UserId userId);
 }
