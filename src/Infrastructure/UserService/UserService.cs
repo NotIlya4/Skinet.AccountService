@@ -5,6 +5,9 @@ using Infrastructure.UserRepository.Exceptions;
 using Infrastructure.UserService.Helpers;
 using Infrastructure.UserService.Models;
 using Infrastructure.ValidJwtTokenSystem.Models;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Context;
 
 namespace Infrastructure.UserService;
 
@@ -14,13 +17,16 @@ public class UserService : IUserService
     private readonly IJwtTokenHelper _jwtTokenHelper;
     private readonly IUserRepository _repository;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly ILogger<UserService> _logger;
 
-    public UserService(IJwtTokenPairService jwtTokenPairService, IJwtTokenHelper jwtTokenHelper, IUserRepository repository, IPasswordHasher passwordHasher)
+    public UserService(IJwtTokenPairService jwtTokenPairService, IJwtTokenHelper jwtTokenHelper, 
+        IUserRepository repository, IPasswordHasher passwordHasher, ILogger<UserService> logger)
     {
         _jwtTokenPairService = jwtTokenPairService;
         _jwtTokenHelper = jwtTokenHelper;
         _repository = repository;
         _passwordHasher = passwordHasher;
+        _logger = logger;
     }
 
     public async Task<JwtTokenPair> Register(RegisterCredentials registerCredentials)
@@ -29,6 +35,11 @@ public class UserService : IUserService
         await _repository.Insert(user, _passwordHasher.Hash(registerCredentials.Password));
         
         JwtTokenPair jwtPair = await _jwtTokenPairService.CreateNewPair(user.Id);
+        using (LogContext.PushProperty("User", user))
+        {
+            _logger.LogInformation("New user registered");
+        }
+
         return jwtPair;
     }
 
@@ -40,6 +51,10 @@ public class UserService : IUserService
         if (!_passwordHasher.Verify(loginCredentials.Password, passwordHash))
         {
             throw new InvalidOperationException("Wrong password");
+        }
+        using (LogContext.PushProperty("User", user))
+        {
+            _logger.LogInformation("User logged in");
         }
         
         JwtTokenPair jwtPair = await _jwtTokenPairService.CreateNewPair(user.Id);

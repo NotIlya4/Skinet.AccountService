@@ -1,6 +1,6 @@
 ﻿namespace Infrastructure.UserService.Models;
 
-public class RegisterCredentials
+public record RegisterCredentials
 {
     public Username Username { get; }
     public Email Email { get; }
