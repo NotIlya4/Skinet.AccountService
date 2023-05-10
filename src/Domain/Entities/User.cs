@@ -4,11 +4,11 @@ namespace Domain.Entities;
 
 public record User
 {
-    public Guid Id { get; }
+    public UserId Id { get; }
     public Username Username { get; }
     public Email Email { get; }
 
-    public User(Guid id, Username username, Email email)
+    public User(UserId id, Username username, Email email)
     {
         Id = id;
         Username = username;

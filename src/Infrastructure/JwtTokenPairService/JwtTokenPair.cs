@@ -1,11 +1,14 @@
-﻿namespace Infrastructure.JwtTokenPairService;
+﻿using Infrastructure.JwtTokenHelper;
+using Infrastructure.RefreshTokenService.Models;
+
+namespace Infrastructure.JwtTokenPairService;
 
 public record JwtTokenPair
 {
-    public string JwtToken { get; }
-    public Guid RefreshToken { get; }
+    public JwtToken JwtToken { get; }
+    public RefreshToken RefreshToken { get; }
 
-    public JwtTokenPair(string jwtToken, Guid refreshToken)
+    public JwtTokenPair(JwtToken jwtToken, RefreshToken refreshToken)
     {
         JwtToken = jwtToken;
         RefreshToken = refreshToken;

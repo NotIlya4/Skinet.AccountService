@@ -7,6 +7,7 @@ public record ValidRefreshTokenCollection
 {
     private List<TimestampRefreshToken> RefreshTokens { get; }
     private TimeSpan ExpireIn { get; }
+    public List<RefreshToken> Tokens => RefreshTokens.Select(t => t.RefreshToken).ToList();
     
     public ValidRefreshTokenCollection(List<TimestampRefreshToken> refreshTokens, TimeSpan expireIn)
     {
@@ -16,12 +17,12 @@ public record ValidRefreshTokenCollection
         CleanExpireTokens();
     }
 
-    public void Add(Guid token)
+    public void Add(RefreshToken token)
     {
         RefreshTokens.Add(new TimestampRefreshToken(issued: DateTime.UtcNow, refreshToken: token));
     }
 
-    public void StrictDelete(Guid token)
+    public void StrictDelete(RefreshToken token)
     {
         TimestampRefreshToken? tokenToDelete = RefreshTokens.FirstOrDefault(t => t.RefreshToken == token);
 
@@ -31,7 +32,7 @@ public record ValidRefreshTokenCollection
         }
     }
 
-    public void EnsureDeleted(Guid token)
+    public void EnsureDeleted(RefreshToken token)
     {
         TimestampRefreshToken? tokenToDelete = RefreshTokens.FirstOrDefault(t => t.RefreshToken == token);
 
@@ -41,42 +42,34 @@ public record ValidRefreshTokenCollection
         }
     }
 
+    public bool Contains(RefreshToken token)
+    {
+        return RefreshTokens.FirstOrDefault(t => t.RefreshToken == token) is not null;
+    }
+
     public List<TimestampRefreshToken> ToList()
     {
         return RefreshTokens.ToList();
     }
 
-    private void CleanExpireTokens()
+    public virtual bool Equals(ValidRefreshTokenCollection? other)
     {
-        int left = -1;
-        int right = RefreshTokens.Count - 1;
-
-        while (left < right)
+        if (other is null)
         {
-            int mid;
-            if (right - left == 1)
-            {
-                mid = right;
-            }
-            else
-            {
-                mid = (left + right) / 2;
-            }
-            
-            TimeSpan issueDelta = DateTime.UtcNow - RefreshTokens[mid].Issued;
-
-            bool isGoingToBeDeleted = issueDelta >= ExpireIn;
-
-            if (isGoingToBeDeleted)
-            {
-                left = mid;
-            }
-            else
-            {
-                right = Math.Clamp(mid - 1, left, right);
-            }
+            return false;
         }
 
-        RefreshTokens.RemoveRange(0, left + 1);
+        return ExpireIn == other.ExpireIn && RefreshTokens.SequenceEqual(other.RefreshTokens);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(RefreshTokens, ExpireIn);
+    }
+
+    private void CleanExpireTokens()
+    {
+        List<DateTime> dates = RefreshTokens.Select(t => t.Issued).ToList();
+        RefreshTokens.RemoveRange(0, TimespanBinarySearch.DeleteCount(dates, ExpireIn));
     }
 }

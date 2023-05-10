@@ -1,9 +1,12 @@
-﻿namespace Infrastructure.RefreshTokenService;
+﻿using Infrastructure.RefreshTokenService.Models;
+
+namespace Infrastructure.RefreshTokenService;
 
 public interface IRefreshTokenService
 {
-    public Task Add(Guid userId, Guid token);
-    public Task StrictDelete(Guid userId, Guid token);
-    public Task EnsureDeleted(Guid userId, Guid token);
-    public Task DeleteAllForUser(Guid userId);
+    public Task<RefreshToken> CreateNew(UserId userId);
+    public Task StrictDelete(UserId userId, RefreshToken token);
+    public Task EnsureDeleted(UserId userId, RefreshToken token);
+    public Task DeleteAllForUser(UserId userId);
+    public Task<bool> Contains(UserId userId, RefreshToken token);
 }

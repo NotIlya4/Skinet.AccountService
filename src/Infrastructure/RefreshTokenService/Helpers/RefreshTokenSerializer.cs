@@ -9,7 +9,7 @@ public class RefreshTokenSerializer
     {
         JObject obj = new();
         obj[nameof(TimestampRefreshToken.Issued)] = refreshToken.Issued;
-        obj[nameof(TimestampRefreshToken.RefreshToken)] = refreshToken.RefreshToken.ToString();
+        obj[nameof(TimestampRefreshToken.RefreshToken)] = refreshToken.RefreshToken.Value.ToString();
         return obj;
     }
 
@@ -17,7 +17,7 @@ public class RefreshTokenSerializer
     {
         return new TimestampRefreshToken(
             issued: rawRefreshToken[nameof(TimestampRefreshToken.Issued)]!.ToObject<DateTime>(),
-            refreshToken: new Guid(rawRefreshToken[nameof(TimestampRefreshToken.RefreshToken)]!.Value<string>()!));
+            refreshToken: new RefreshToken(new Guid(rawRefreshToken[nameof(TimestampRefreshToken.RefreshToken)]!.Value<string>()!)));
     }
 
     public string SerializeCollection(List<TimestampRefreshToken> refreshTokens)

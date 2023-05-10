@@ -2,10 +2,10 @@
 
 public class LoginCredentials
 {
-    public string Email { get; }
-    public string Password { get; }
+    public Email Email { get; }
+    public Password Password { get; }
     
-    public LoginCredentials(string email, string password)
+    public LoginCredentials(Email email, Password password)
     {
         Email = email;
         Password = password;

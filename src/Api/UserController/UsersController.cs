@@ -1,9 +1,10 @@
 ﻿using Api.UserController.Helpers;
 using Api.UserController.Views;
 using Domain.Entities;
+using Domain.Primitives;
+using Infrastructure.JwtTokenHelper;
 using Infrastructure.JwtTokenPairService;
 using Infrastructure.UserService;
-using Infrastructure.UserService.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.UserController;
@@ -60,7 +61,7 @@ public class UsersController : ControllerBase
     [Route("logoutFromAllDevices")]
     public async Task<ActionResult> LogoutFromAllDevices(UserIdView userIdView)
     {
-        await _userService.LogOutInAllEntries(new Guid(userIdView.UserId));
+        await _userService.LogOutInAllEntries(new UserId(userIdView.UserId));
         return NoContent();
     }
 
@@ -68,7 +69,7 @@ public class UsersController : ControllerBase
     [Route("id/{id}")]
     public async Task<ActionResult<UserView>> GetUserById(string id)
     {
-        User address = await _userService.GetUser(UserServiceStrictFilter.Id, id);
+        User address = await _userService.GetUserById(new UserId(id));
         UserView addressView = _mapper.MapUser(address);
         return Ok(addressView);
     }
@@ -77,7 +78,7 @@ public class UsersController : ControllerBase
     [Route("name/{name}")]
     public async Task<ActionResult<UserView>> GetUserByName(string name)
     {
-        User address = await _userService.GetUser(UserServiceStrictFilter.Id, name);
+        User address = await _userService.GetUserByUsername(new Username(name));
         UserView addressView = _mapper.MapUser(address);
         return Ok(addressView);
     }
@@ -86,7 +87,7 @@ public class UsersController : ControllerBase
     [Route("jwt/{jwt}")]
     public async Task<ActionResult<UserView>> GetUserByJwt(string jwt)
     {
-        User address = await _userService.GetUser(UserServiceStrictFilter.Jwt, jwt);
+        User address = await _userService.GetUserByJwtToken(new JwtToken(jwt));
         UserView addressView = _mapper.MapUser(address);
         return Ok(addressView);
     }
@@ -95,7 +96,7 @@ public class UsersController : ControllerBase
     [Route("email/{email}/busy")]
     public async Task<ActionResult<bool>> IsEmailBusy(string email)
     {
-        bool isBusy = await _userService.IsEmailBusy(email);
+        bool isBusy = await _userService.IsEmailBusy(new Email(email));
         return Ok(isBusy);
     }
     
@@ -103,7 +104,7 @@ public class UsersController : ControllerBase
     [Route("username/{username}/busy")]
     public async Task<ActionResult<bool>> IsUsernameBusy(string username)
     {
-        bool isBusy = await _userService.IsUsernameBusy(username);
+        bool isBusy = await _userService.IsUsernameBusy(new Username(username));
         return Ok(isBusy);
     }
 }

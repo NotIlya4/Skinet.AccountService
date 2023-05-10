@@ -72,8 +72,10 @@ public static class DiExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IJwtTokenPairService, JwtTokenPairService>();
         services.AddScoped<IJwtTokenHelper, JwtTokenHelper>();
+        services.AddScoped<IValidJwtTokenFactory, ValidJwtTokenFactory>();
+        services.AddScoped<IJwtTokenValidator, JwtTokenHelper>();
         services.AddSingleton(jwtTokenManagerOptions);
     }
 

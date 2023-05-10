@@ -14,7 +14,7 @@ public static class ConfigurationExtensions
             config = config.GetSection(key);
         }
         
-        SymmetricSecurityKey secret = new(Encoding.UTF8.GetBytes(config.GetRequiredValue("Secret")));
+        var secret = config.GetRequiredValue("Secret");
         TimeSpan expire = TimeSpan.FromMinutes(config.GetRequiredValue<float>("ExpireMinutes"));
         string issuer = config.GetRequiredValue("Issuer");
         string audience = config.GetRequiredValue("Audience");

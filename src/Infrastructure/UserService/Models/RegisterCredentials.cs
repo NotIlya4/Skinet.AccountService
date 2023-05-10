@@ -1,6 +1,4 @@
-﻿using Domain.Primitives;
-
-namespace Infrastructure.UserService.Models;
+﻿namespace Infrastructure.UserService.Models;
 
 public class RegisterCredentials
 {

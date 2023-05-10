@@ -1,6 +1,9 @@
 ﻿using Api.UserController.Views;
 using Domain.Entities;
+using Domain.Primitives;
+using Infrastructure.JwtTokenHelper;
 using Infrastructure.JwtTokenPairService;
+using Infrastructure.RefreshTokenService.Models;
 using Infrastructure.UserService.Models;
 
 namespace Api.UserController.Helpers;
@@ -10,15 +13,15 @@ public class ViewMapper
     public JwtTokenPairView MapJwtTokenPair(JwtTokenPair jwtTokenPair)
     {
         return new JwtTokenPairView(
-            jwtToken: jwtTokenPair.JwtToken,
-            refreshToken: jwtTokenPair.RefreshToken.ToString());
+            jwtToken: jwtTokenPair.JwtToken.Raw,
+            refreshToken: jwtTokenPair.RefreshToken.Value.ToString());
     }
 
     public JwtTokenPair MapJwtTokenPair(JwtTokenPairView view)
     {
         return new JwtTokenPair(
-            jwtToken: view.JwtToken,
-            refreshToken: new Guid(view.RefreshToken));
+            jwtToken: new JwtToken(view.JwtToken),
+            refreshToken: new RefreshToken(new Guid(view.RefreshToken)));
     }
 
     public UserView MapUser(User user)
@@ -40,7 +43,7 @@ public class ViewMapper
     public LoginCredentials MapLoginCredentials(LoginCredentialsView view)
     {
         return new LoginCredentials(
-            email: view.Email,
-            password: view.Password);
+            email: new Email(view.Email),
+            password: new Password(view.Password));
     }
 }

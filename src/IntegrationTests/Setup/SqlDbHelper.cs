@@ -12,10 +12,10 @@ namespace IntegrationTests.Setup;
 
 public class SqlDbHelper
 {
-    public User SampleUser { get; } = new User(new Guid("8fa1da92-79d2-48f3-9911-c3f70a9c3e16"),
+    public User SampleUser { get; } = new(new UserId("8fa1da92-79d2-48f3-9911-c3f70a9c3e16"),
         new Username("NotIlya"), new Email("sample@email.com"));
 
-    public UserData SampleUserData { get; } = new UserData("8fa1da92-79d2-48f3-9911-c3f70a9c3e16", "NotIlya",
+    public UserData SampleUserData { get; } = new("8fa1da92-79d2-48f3-9911-c3f70a9c3e16", "NotIlya",
         "sample@email.com", "$2a$12$HodqSbpPxbXBWvW.9RjdsOcY1cWo2eiooHgBniGl443AkpZE4DZv2");
 
     public Password SampleUserPassword { get; } = new("Password1");
@@ -52,7 +52,7 @@ public class SqlDbHelper
         
         try
         {
-            await _repository.Get(UserRepositoryStrictFilter.Id, user.Id.ToString());
+            await _repository.GetById(user.Id);
         }
         catch (UserNotFoundException)
         {

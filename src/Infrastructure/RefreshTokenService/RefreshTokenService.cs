@@ -17,16 +17,17 @@ public class RefreshTokenService : IRefreshTokenService
         _options = options;
     }
 
-    public async Task Add(Guid userId, Guid token)
+    public async Task<RefreshToken> CreateNew(UserId userId)
     {
         ValidRefreshTokenCollection tokens = await Get(userId);
-        
+        var token = new RefreshToken(Guid.NewGuid());
         tokens.Add(token);
-
         await Set(tokens, userId);
+
+        return token;
     }
 
-    public async Task StrictDelete(Guid userId, Guid token)
+    public async Task StrictDelete(UserId userId, RefreshToken token)
     {
         ValidRefreshTokenCollection tokens = await Get(userId);
 
@@ -35,7 +36,7 @@ public class RefreshTokenService : IRefreshTokenService
         await Set(tokens, userId);
     }
 
-    public async Task EnsureDeleted(Guid userId, Guid token)
+    public async Task EnsureDeleted(UserId userId, RefreshToken token)
     {
         ValidRefreshTokenCollection tokens = await Get(userId);
         
@@ -44,12 +45,18 @@ public class RefreshTokenService : IRefreshTokenService
         await Set(tokens, userId);
     }
 
-    public async Task DeleteAllForUser(Guid userId)
+    public async Task DeleteAllForUser(UserId userId)
     {
         await _redis.KeyDeleteAsync(BuildKey(userId));
     }
 
-    private async Task<ValidRefreshTokenCollection> Get(Guid userId)
+    public async Task<bool> Contains(UserId userId, RefreshToken token)
+    {
+        ValidRefreshTokenCollection tokens = await Get(userId);
+        return tokens.Contains(token);
+    }
+
+    private async Task<ValidRefreshTokenCollection> Get(UserId userId)
     {
         RedisValue redisValue = await _redis.StringGetAsync(BuildKey(userId));
 
@@ -66,13 +73,13 @@ public class RefreshTokenService : IRefreshTokenService
         return refreshTokens;
     }
 
-    private async Task Set(ValidRefreshTokenCollection refreshTokens, Guid userId)
+    private async Task Set(ValidRefreshTokenCollection refreshTokens, UserId userId)
     {
         await _redis.StringSetAsync(BuildKey(userId), _serializer.SerializeCollection(refreshTokens), _options.Expire);
     }
 
-    private string BuildKey(Guid userId)
+    private string BuildKey(UserId userId)
     {
-        return $"{userId.ToString()}-refresh-tokens";
+        return $"{userId.Value.ToString()}-refresh-tokens";
     }
 }

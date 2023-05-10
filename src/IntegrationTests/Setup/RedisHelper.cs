@@ -7,8 +7,7 @@ namespace IntegrationTests.Setup;
 
 public class RedisHelper
 {
-    public Guid SampleUserId { get; } = new Guid("d49ad24a-7437-4c3c-bdb7-c4cb4e08a845");
-    public Guid SampleToken { get; } = new Guid("4615379b-eb72-4a66-a99b-d841d7c93cea");
+    public UserId SampleUserId { get; } = new("d49ad24a-7437-4c3c-bdb7-c4cb4e08a845");
     private readonly IDatabase _redis;
     private readonly IRefreshTokenService _service;
 
@@ -22,12 +21,6 @@ public class RedisHelper
     public async Task Reload()
     {
         await Drop();
-        await Seed();
-    }
-
-    public async Task Seed()
-    {
-        await _service.Add(SampleUserId, SampleToken);
     }
 
     public async Task Drop()

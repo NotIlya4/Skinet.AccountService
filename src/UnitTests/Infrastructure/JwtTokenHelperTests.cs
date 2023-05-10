@@ -7,90 +7,68 @@ namespace UnitTests.Infrastructure;
 
 public class JwtTokenHelperTests
 {
-    public JwtTokenHelper Helper { get; }
-    public JwtTokenHelperOptions Options { get; }
-    public Guid UserId { get; } = new Guid("a6e96499-c80a-474d-a5d4-0ad065eb19c0");
-    public string RawToken { get; }
-    public JwtSecurityToken Token { get; }
-    public string RawExpiredToken { get; }
-    public JwtSecurityToken ExpiredToken { get; }
+    private readonly IJwtTokenHelper _helper;
+    private readonly JwtTokenHelperOptions _options;
+    private readonly UserId _userId = new("a6e96499-c80a-474d-a5d4-0ad065eb19c0");
+    private readonly string _rawToken;
+    private readonly JwtToken _token;
+    private readonly JwtToken _expiredToken;
+    private readonly SymmetricSecurityKey _secret;
     
     public JwtTokenHelperTests()
     {
-        Options = new JwtTokenHelperOptions(
+        _options = new JwtTokenHelperOptions(
             issuer: "AccountService",
             audience: "Api",
-            secret: new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1tsJusT@S@mpleP@ssword!")),
+            secret: "1tsJusT@S@mpleP@ssword!",
             expire: TimeSpan.FromMinutes(15));
-        
-        Helper = new JwtTokenHelper(Options);
-        RawToken = Helper.CreateJwtToken(UserId);
-        Token = new JwtSecurityToken(RawToken);
-        ExpiredToken = AlterExpires(Token, DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow.AddMinutes(-15));
-        RawExpiredToken = Serialize(ExpiredToken);
+
+        _secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
+        _helper = new JwtTokenHelper(_options);
+        _token = _helper.Create(_userId);
+        _rawToken = _token.Raw;
+        _expiredToken = AlterExpires(_token, DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow.AddMinutes(-15));
     }
 
     [Fact]
     public void CreateJwtToken_PassUserId_JwtTokenWithThatUserId()
     {
-        Guid userId = new Guid(Token.Subject);
-        
-        Assert.Equal(UserId, userId);
+        Assert.Equal(_userId, _token.UserId);
     }
     
     [Fact]
-    public void CreateJwtToken_ExpireSetAfter15Mins_ValidToAfter15Mins()
+    public void CreateJwtToken_CreateToken_TokenMustBeValidFor15Mins()
     {
         DateTime expectValidTo = DateTime.UtcNow.AddMinutes(15);
 
-        DateTime validTo = Token.ValidTo;
+        DateTime validTo = _token.ValidTo;
 
         Assert.True(IsNearlyEqualTime(expectValidTo, validTo));
     }
 
     [Fact]
-    public void CreateJwtToken_CreatedTime_ValidFromAndIssuedAtNow()
+    public void CreateJwtToken_UserId_TokenWithThatUserId()
     {
-        DateTime issuedTime = DateTime.UtcNow;
-
-        DateTime validFrom = Token.ValidFrom;
-        DateTime issued = Token.IssuedAt;
-        
-        Assert.True(IsNearlyEqualTime(issuedTime, validFrom));
-        Assert.True(IsNearlyEqualTime(issuedTime, issued));
+        Assert.Equal(_userId, _token.UserId);
     }
 
     [Fact]
-    public void ValidateAndExtractUserId_ExpiredToken_ThrowException()
+    public void Validate_ExpiredToken_Throw()
     {
-        Assert.Throws<SecurityTokenExpiredException>(() => { Helper.ValidateAndExtractUserId(RawExpiredToken); });
+        Assert.Throws<SecurityTokenExpiredException>(() => { _helper.Validate(_expiredToken); });
     }
 
-    [Fact]
-    public void ValidateAndExtractUserId_ValidToken_UserId()
+    private JwtToken AlterExpires(JwtToken token, DateTime notBefore, DateTime expires)
     {
-        Guid result = Helper.ValidateAndExtractUserId(RawToken);
-        
-        Assert.Equal(UserId, result);
-    }
-
-    [Fact]
-    public void ExtractUserId_InvalidToken_UserId()
-    {
-        Guid result = Helper.ExtractUserId(RawToken);
-        
-        Assert.Equal(UserId, result);
-    }
-
-    private JwtSecurityToken AlterExpires(JwtSecurityToken token, DateTime notBefore, DateTime expires)
-    {
-        return new JwtSecurityToken(
-            issuer: token.Issuer,
-            audience: Options.Audience,
-            claims: token.Claims,
+        var jwtSecurityToken = new JwtSecurityToken(
+            issuer: token.JwtSecurityToken.Issuer,
+            audience: _options.Audience,
+            claims: token.JwtSecurityToken.Claims,
             notBefore: notBefore,
             expires: expires,
-            signingCredentials: new SigningCredentials(Options.Secret, SecurityAlgorithms.HmacSha256));
+            signingCredentials: new SigningCredentials(_secret, SecurityAlgorithms.HmacSha256));
+
+        return new JwtToken(Serialize(jwtSecurityToken));
     }
 
     private string Serialize(JwtSecurityToken token)

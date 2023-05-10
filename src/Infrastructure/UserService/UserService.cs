@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Infrastructure.JwtTokenHelper;
+﻿using Infrastructure.JwtTokenHelper;
 using Infrastructure.JwtTokenPairService;
 using Infrastructure.UserRepository;
 using Infrastructure.UserRepository.Exceptions;
@@ -10,14 +9,14 @@ namespace Infrastructure.UserService;
 
 public class UserService : IUserService
 {
-    private readonly IJwtTokenService _jwtTokenService;
+    private readonly IJwtTokenPairService _jwtTokenPairService;
     private readonly IJwtTokenHelper _jwtTokenHelper;
     private readonly IUserRepository _repository;
     private readonly IPasswordHasher _passwordHasher;
 
-    public UserService(IJwtTokenService jwtTokenService, IJwtTokenHelper jwtTokenHelper, IUserRepository repository, IPasswordHasher passwordHasher)
+    public UserService(IJwtTokenPairService jwtTokenPairService, IJwtTokenHelper jwtTokenHelper, IUserRepository repository, IPasswordHasher passwordHasher)
     {
-        _jwtTokenService = jwtTokenService;
+        _jwtTokenPairService = jwtTokenPairService;
         _jwtTokenHelper = jwtTokenHelper;
         _repository = repository;
         _passwordHasher = passwordHasher;
@@ -25,16 +24,16 @@ public class UserService : IUserService
 
     public async Task<JwtTokenPair> Register(RegisterCredentials registerCredentials)
     {
-        User user = new User(Guid.NewGuid(), registerCredentials.Username, registerCredentials.Email);
+        User user = new User(new UserId(Guid.NewGuid()), registerCredentials.Username, registerCredentials.Email);
         await _repository.Insert(user, _passwordHasher.Hash(registerCredentials.Password));
         
-        JwtTokenPair jwtPair = await _jwtTokenService.CreateNewPair(user.Id);
+        JwtTokenPair jwtPair = await _jwtTokenPairService.CreateNewPair(user.Id);
         return jwtPair;
     }
 
     public async Task<JwtTokenPair> Login(LoginCredentials loginCredentials)
     {
-        User user = await _repository.Get(UserRepositoryStrictFilter.Email, loginCredentials.Email);
+        User user = await _repository.GetByEmail(loginCredentials.Email);
         string passwordHash = await _repository.GetPasswordHash(user.Id);
         
         if (!_passwordHasher.Verify(loginCredentials.Password, passwordHash))
@@ -42,57 +41,53 @@ public class UserService : IUserService
             throw new InvalidOperationException("Wrong password");
         }
         
-        JwtTokenPair jwtPair = await _jwtTokenService.CreateNewPair(user.Id);
+        JwtTokenPair jwtPair = await _jwtTokenPairService.CreateNewPair(user.Id);
         return jwtPair;
     }
 
     public async Task<JwtTokenPair> UpdateJwtPair(JwtTokenPair jwtTokenPair)
     {
-        return await _jwtTokenService.UpdatePair(_jwtTokenHelper.ExtractUserId(jwtTokenPair.JwtToken), jwtTokenPair.RefreshToken);
+        ValidJwtToken token = _jwtTokenHelper.Validate(jwtTokenPair.JwtToken);
+        return await _jwtTokenPairService.UpdatePair(token.Token.UserId, jwtTokenPair.RefreshToken);
     }
 
-    public async Task<User> GetUser(UserServiceStrictFilter filter, string value)
+    public async Task<User> GetUserById(UserId id)
     {
-        User? user = null;
-        if (filter == UserServiceStrictFilter.Id)
-        {
-            user = await _repository.Get(UserRepositoryStrictFilter.Id, value);
-        }
+        return await _repository.GetById(id);
+    }
 
-        if (filter == UserServiceStrictFilter.Email)
-        {
-            user = await _repository.Get(UserRepositoryStrictFilter.Email, value);
-        }
+    public async Task<User> GetUserByEmail(Email email)
+    {
+        return await _repository.GetByEmail(email);
+    }
 
-        if (filter == UserServiceStrictFilter.Jwt)
-        {
-            Guid userId = _jwtTokenHelper.ValidateAndExtractUserId(value);
-            user = await _repository.Get(UserRepositoryStrictFilter.Id, userId.ToString());
-        }
-        
-        if (user is null)
-        {
-            throw new InvalidOperationException("User not found");
-        }
+    public async Task<User> GetUserByUsername(Username username)
+    {
+        return await _repository.GetByUsername(username);
+    }
 
-        return user;
+    public async Task<User> GetUserByJwtToken(JwtToken jwtToken)
+    {
+        ValidJwtToken token = _jwtTokenHelper.Validate(jwtToken);
+        return await _repository.GetById(token.Token.UserId);
     }
 
     public async Task Logout(JwtTokenPair jwtTokenPair)
     {
-        await _jwtTokenService.ExpireRefreshToken(_jwtTokenHelper.ExtractUserId(jwtTokenPair.JwtToken), jwtTokenPair.RefreshToken);
+        ValidJwtToken token = _jwtTokenHelper.Validate(jwtTokenPair.JwtToken);
+        await _jwtTokenPairService.EnsureRefreshTokenExpired(token.Token.UserId, jwtTokenPair.RefreshToken);
     }
 
-    public async Task LogOutInAllEntries(Guid userId)
+    public async Task LogOutInAllEntries(UserId userId)
     {
-        await _jwtTokenService.ExpireAllRefreshTokens(userId);
+        await _jwtTokenPairService.ExpireAllRefreshTokens(userId);
     }
 
-    public async Task<bool> IsEmailBusy(string email)
+    public async Task<bool> IsEmailBusy(Email email)
     {
         try
         {
-            await _repository.Get(UserRepositoryStrictFilter.Email, email);
+            await _repository.GetByEmail(email);
             return true;
         }
         catch (UserNotFoundException)
@@ -101,11 +96,11 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<bool> IsUsernameBusy(string username)
+    public async Task<bool> IsUsernameBusy(Username username)
     {
         try
         {
-            await _repository.Get(UserRepositoryStrictFilter.Username, username);
+            await _repository.GetByUsername(username);
             return true;
         }
         catch (UserNotFoundException)

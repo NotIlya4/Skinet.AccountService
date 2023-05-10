@@ -1,8 +1,10 @@
-﻿namespace Infrastructure.RefreshTokenService.Exceptions;
+﻿using Infrastructure.RefreshTokenService.Models;
+
+namespace Infrastructure.RefreshTokenService.Exceptions;
 
 public class RefreshTokenNotFoundException : Exception
 {
-    public RefreshTokenNotFoundException(Guid token) : base($"{token.ToString()} not found")
+    public RefreshTokenNotFoundException(RefreshToken token) : base($"{token.Value.ToString()} not found")
     {
         
     }
