@@ -16,7 +16,7 @@ COPY src/ .
 # Create migration bundle
 WORKDIR /src/Api
 ENV PATH="${PATH}:/root/.dotnet/tools"
-RUN dotnet ef migrations bundle --verbose -o /src/migrations-bundle
+RUN dotnet ef migrations bundle --verbose -o /src/efbundle
 
 # Build
 WORKDIR /src/Api
@@ -27,5 +27,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS final
 EXPOSE 80
 WORKDIR /app
 COPY --from=build /app/publish .
-COPY --from=build /src/migrations-bundle .
+COPY --from=build /src/efbundle .
 ENTRYPOINT ["dotnet", "Api.dll"]
