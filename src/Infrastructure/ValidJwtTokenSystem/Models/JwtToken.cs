@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 
-namespace Infrastructure.JwtTokenHelper;
+namespace Infrastructure.ValidJwtTokenSystem.Models;
 
 public record JwtToken
 {

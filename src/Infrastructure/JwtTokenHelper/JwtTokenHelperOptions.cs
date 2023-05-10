@@ -1,6 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-
-namespace Infrastructure.JwtTokenHelper;
+﻿namespace Infrastructure.JwtTokenHelper;
 
 public class JwtTokenHelperOptions
 {

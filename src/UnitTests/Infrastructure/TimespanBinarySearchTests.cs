@@ -68,7 +68,7 @@ public class TimespanBinarySearchTests
     [Fact]
     public void DeleteCount_EmptyList_Zero()
     {
-        int result = Call(new List<DateTime>() { });
+        int result = Call(new List<DateTime>());
         
         Assert.Equal(0, result);
     }

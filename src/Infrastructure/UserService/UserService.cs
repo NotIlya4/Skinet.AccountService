@@ -4,6 +4,7 @@ using Infrastructure.UserRepository;
 using Infrastructure.UserRepository.Exceptions;
 using Infrastructure.UserService.Helpers;
 using Infrastructure.UserService.Models;
+using Infrastructure.ValidJwtTokenSystem.Models;
 
 namespace Infrastructure.UserService;
 

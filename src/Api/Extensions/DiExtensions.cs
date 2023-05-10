@@ -13,6 +13,7 @@ using Infrastructure.RefreshTokenService.Models;
 using Infrastructure.UserRepository;
 using Infrastructure.UserService;
 using Infrastructure.UserService.Helpers;
+using Infrastructure.ValidJwtTokenSystem;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;

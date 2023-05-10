@@ -1,10 +1,10 @@
 ﻿using Api.UserController.Views;
 using Domain.Entities;
 using Domain.Primitives;
-using Infrastructure.JwtTokenHelper;
 using Infrastructure.JwtTokenPairService;
 using Infrastructure.RefreshTokenService.Models;
 using Infrastructure.UserService.Models;
+using Infrastructure.ValidJwtTokenSystem.Models;
 
 namespace Api.UserController.Helpers;
 

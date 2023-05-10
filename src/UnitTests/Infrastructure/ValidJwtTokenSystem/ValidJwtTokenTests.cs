@@ -1,7 +1,8 @@
-﻿using Infrastructure.JwtTokenHelper;
+﻿using Infrastructure.ValidJwtTokenSystem;
+using Infrastructure.ValidJwtTokenSystem.Models;
 using Moq;
 
-namespace UnitTests.Infrastructure;
+namespace UnitTests.Infrastructure.ValidJwtTokenSystem;
 
 public class ValidJwtTokenTests
 {

@@ -1,11 +1,9 @@
-﻿using Domain.Entities;
-using Domain.Primitives;
-using Infrastructure.EntityFramework;
+﻿using Infrastructure.EntityFramework;
 using Infrastructure.UserRepository;
 using IntegrationTests.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IntegrationTests.Infrastructure;
+namespace IntegrationTests.Tests.Infrastructure;
 
 [Collection(nameof(AppFixture))]
 public class UserRepositoryTests : IDisposable

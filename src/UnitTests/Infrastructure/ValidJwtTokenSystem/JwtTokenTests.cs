@@ -1,6 +1,6 @@
-﻿using Infrastructure.JwtTokenHelper;
+﻿using Infrastructure.ValidJwtTokenSystem.Models;
 
-namespace UnitTests.Infrastructure;
+namespace UnitTests.Infrastructure.ValidJwtTokenSystem;
 
 public class JwtTokenTests
 {

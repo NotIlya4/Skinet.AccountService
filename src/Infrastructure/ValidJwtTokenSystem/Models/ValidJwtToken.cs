@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.JwtTokenHelper;
+﻿namespace Infrastructure.ValidJwtTokenSystem.Models;
 
 public record ValidJwtToken
 {

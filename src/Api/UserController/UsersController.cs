@@ -2,9 +2,9 @@
 using Api.UserController.Views;
 using Domain.Entities;
 using Domain.Primitives;
-using Infrastructure.JwtTokenHelper;
 using Infrastructure.JwtTokenPairService;
 using Infrastructure.UserService;
+using Infrastructure.ValidJwtTokenSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.UserController;

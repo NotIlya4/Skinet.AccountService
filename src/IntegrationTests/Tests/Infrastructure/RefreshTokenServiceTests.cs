@@ -1,16 +1,14 @@
 ﻿using Infrastructure.RefreshTokenService;
 using Infrastructure.RefreshTokenService.Exceptions;
-using Infrastructure.RefreshTokenService.Helpers;
 using Infrastructure.RefreshTokenService.Models;
 using IntegrationTests.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IntegrationTests.Infrastructure;
+namespace IntegrationTests.Tests.Infrastructure;
 
 [Collection(nameof(AppFixture))]
 public class RefreshTokenServiceTests : IDisposable
 {
-    private readonly AppFixture _fixture;
     private readonly IRefreshTokenService _service;
     private readonly RedisHelper _helper;
     private readonly IServiceScope _scope;
@@ -18,7 +16,6 @@ public class RefreshTokenServiceTests : IDisposable
 
     public RefreshTokenServiceTests(AppFixture fixture)
     {
-        _fixture = fixture;
         _scope = fixture.Fixture.Services.CreateScope();
         _service = _scope.ServiceProvider.GetRequiredService<IRefreshTokenService>();
         _helper = fixture.RedisHelper;

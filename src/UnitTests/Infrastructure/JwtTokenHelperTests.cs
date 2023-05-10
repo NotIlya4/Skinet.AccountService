@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Infrastructure.JwtTokenHelper;
+using Infrastructure.ValidJwtTokenSystem.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace UnitTests.Infrastructure;
@@ -10,7 +11,6 @@ public class JwtTokenHelperTests
     private readonly IJwtTokenHelper _helper;
     private readonly JwtTokenHelperOptions _options;
     private readonly UserId _userId = new("a6e96499-c80a-474d-a5d4-0ad065eb19c0");
-    private readonly string _rawToken;
     private readonly JwtToken _token;
     private readonly JwtToken _expiredToken;
     private readonly SymmetricSecurityKey _secret;
@@ -26,7 +26,6 @@ public class JwtTokenHelperTests
         _secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
         _helper = new JwtTokenHelper(_options);
         _token = _helper.Create(_userId);
-        _rawToken = _token.Raw;
         _expiredToken = AlterExpires(_token, DateTime.UtcNow.AddMinutes(-30), DateTime.UtcNow.AddMinutes(-15));
     }
 

@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-using Domain.Primitives;
-using Infrastructure.EntityFramework;
+﻿using Infrastructure.EntityFramework;
 using Infrastructure.JwtTokenPairService;
 using Infrastructure.RefreshTokenService;
 using Infrastructure.UserRepository.Exceptions;
@@ -10,12 +8,11 @@ using IntegrationTests.Setup;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
-namespace IntegrationTests.Infrastructure;
+namespace IntegrationTests.Tests.Infrastructure.UserService;
 
 [Collection(nameof(AppFixture))]
 public class UserServiceRegisterAndLoginTests : IDisposable
 {
-    private readonly AppFixture _fixture;
     private readonly IUserService _service;
     private readonly IServiceScope _scope;
     private readonly SqlDbHelper _sqlDbHelper;
@@ -27,7 +24,6 @@ public class UserServiceRegisterAndLoginTests : IDisposable
 
     public UserServiceRegisterAndLoginTests(AppFixture fixture)
     {
-        _fixture = fixture;
         _scope = fixture.Fixture.Services.CreateScope();
         _service = _scope.ServiceProvider.GetRequiredService<IUserService>();
         _sqlDbHelper = new SqlDbHelper(_scope.ServiceProvider.GetRequiredService<AppDbContext>());

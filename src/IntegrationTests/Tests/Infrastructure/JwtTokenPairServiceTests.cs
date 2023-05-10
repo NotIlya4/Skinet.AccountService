@@ -2,11 +2,10 @@
 using Infrastructure.JwtTokenPairService;
 using Infrastructure.RefreshTokenService;
 using Infrastructure.RefreshTokenService.Exceptions;
-using Infrastructure.RefreshTokenService.Models;
 using IntegrationTests.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace IntegrationTests.Infrastructure;
+namespace IntegrationTests.Tests.Infrastructure;
 
 [Collection(nameof(AppFixture))]
 public class JwtTokenPairServiceTests : IDisposable
@@ -15,7 +14,6 @@ public class JwtTokenPairServiceTests : IDisposable
     private readonly IJwtTokenPairService _service;
     private readonly IServiceScope _scope;
     private readonly UserId _userId;
-    private readonly IJwtTokenHelper _jwtTokenHelper;
     private readonly IRefreshTokenService _refreshTokenService;
 
     public JwtTokenPairServiceTests(AppFixture fixture)
@@ -24,7 +22,7 @@ public class JwtTokenPairServiceTests : IDisposable
         _scope = fixture.Fixture.Services.CreateScope();
         _service = _scope.ServiceProvider.GetRequiredService<IJwtTokenPairService>();
         _userId = _helper.SampleUserId;
-        _jwtTokenHelper = _scope.ServiceProvider.GetRequiredService<IJwtTokenHelper>();
+        _scope.ServiceProvider.GetRequiredService<IJwtTokenHelper>();
         _refreshTokenService = _scope.ServiceProvider.GetRequiredService<IRefreshTokenService>();
     }
 

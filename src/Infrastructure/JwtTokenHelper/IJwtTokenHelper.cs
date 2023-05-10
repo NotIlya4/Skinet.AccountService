@@ -1,4 +1,6 @@
-﻿namespace Infrastructure.JwtTokenHelper;
+﻿using Infrastructure.ValidJwtTokenSystem.Models;
+
+namespace Infrastructure.JwtTokenHelper;
 
 public interface IJwtTokenHelper
 {

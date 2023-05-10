@@ -1,6 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Infrastructure.ValidJwtTokenSystem;
+using Infrastructure.ValidJwtTokenSystem.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.JwtTokenHelper;

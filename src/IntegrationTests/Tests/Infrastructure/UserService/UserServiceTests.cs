@@ -1,37 +1,28 @@
-﻿using Domain.Entities;
-using Domain.Primitives;
-using Infrastructure.EntityFramework;
-using Infrastructure.JwtTokenHelper;
+﻿using Infrastructure.EntityFramework;
 using Infrastructure.JwtTokenPairService;
 using Infrastructure.RefreshTokenService;
-using Infrastructure.RefreshTokenService.Exceptions;
 using Infrastructure.RefreshTokenService.Models;
-using Infrastructure.UserRepository.Exceptions;
 using Infrastructure.UserService;
 using Infrastructure.UserService.Models;
+using Infrastructure.ValidJwtTokenSystem.Models;
 using IntegrationTests.Setup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 
-namespace IntegrationTests.Infrastructure;
+namespace IntegrationTests.Tests.Infrastructure.UserService;
 
 [Collection(nameof(AppFixture))]
 public class UserServiceTests : IDisposable
 {
-    private readonly AppFixture _fixture;
     private readonly IUserService _service;
     private readonly IServiceScope _scope;
     private readonly SqlDbHelper _sqlDbHelper;
     private readonly RedisHelper _redisHelper;
-    private readonly Username _username = new("Boba");
-    private readonly Email _email = new("boba@email.com");
-    private readonly Password _password = new("Password1");
     private readonly IRefreshTokenService _refreshTokenService;
 
     public UserServiceTests(AppFixture fixture)
     {
-        _fixture = fixture;
         _scope = fixture.Fixture.Services.CreateScope();
         _service = _scope.ServiceProvider.GetRequiredService<IUserService>();
         _sqlDbHelper = new SqlDbHelper(_scope.ServiceProvider.GetRequiredService<AppDbContext>());

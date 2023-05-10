@@ -1,5 +1,5 @@
-﻿using Infrastructure.JwtTokenHelper;
-using Infrastructure.RefreshTokenService.Models;
+﻿using Infrastructure.RefreshTokenService.Models;
+using Infrastructure.ValidJwtTokenSystem.Models;
 
 namespace Infrastructure.JwtTokenPairService;
 
