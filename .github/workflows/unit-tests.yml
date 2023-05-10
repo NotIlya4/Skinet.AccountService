@@ -1,0 +1,36 @@
+﻿name: Unit tests
+
+on:
+  push:
+    branches:
+    paths:
+      - src/**
+  pull_request:
+    branches:
+    paths:
+      - src/**
+
+jobs:
+  run_unit_tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7
+
+      - name: Restore dependencies
+        run: |
+          cd src
+          dotnet restore
+          echo "✅ Project restored"
+      
+      - name: Run tests
+        run: |
+          cd src/UnitTests
+          dotnet test --no-restore
+          echo "✅ Tests executed"
