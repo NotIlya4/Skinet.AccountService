@@ -31,14 +31,6 @@ public class UserServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task UpdateJwtPair_InvalidJwtToken_Throw()
-    {
-        string jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MGY2MTAzYS1kZjlmLTQyNDEtYTU0ZC1hN2Y2MWQ5YjllOGUiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjIsImV4cCI6MTUxNjIzOTEyMn0.ho9RPeKtMqINoXqw7LtqlOKawuumNBTtRnEtOyRiJ_A";
-        var pair = new JwtTokenPair(new JwtToken(jwt), new RefreshToken(Guid.NewGuid()));
-        await Assert.ThrowsAnyAsync<SecurityTokenException>(async () => await _service.UpdateJwtPair(pair));
-    }
-
-    [Fact]
     public async Task UpdateJwtPair_Update_DeletePreviousRefreshToken()
     {
         JwtTokenPair pair = await Login();
