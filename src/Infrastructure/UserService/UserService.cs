@@ -63,8 +63,7 @@ public class UserService : IUserService
 
     public async Task<JwtTokenPair> UpdateJwtPair(JwtTokenPair jwtTokenPair)
     {
-        ValidJwtToken token = _jwtTokenHelper.Validate(jwtTokenPair.JwtToken);
-        return await _jwtTokenPairService.UpdatePair(token.Token.UserId, jwtTokenPair.RefreshToken);
+        return await _jwtTokenPairService.UpdatePair(jwtTokenPair.JwtToken.UserId, jwtTokenPair.RefreshToken);
     }
 
     public async Task<User> GetUserById(UserId id)
