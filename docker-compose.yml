@@ -1,9 +1,0 @@
-﻿services:
-  account-service:
-    build: .
-    container_name: account-service
-    restart: always
-    environment:
-      - ASPNETCORE_ENVIRONMENT=DockerCompose
-    ports:
-      - 5002:80
